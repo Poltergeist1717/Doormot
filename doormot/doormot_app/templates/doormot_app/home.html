@@ -1,0 +1,388 @@
+{% extends  "doormot_app/base_temp.html" %}
+{% load static %}
+
+
+<!--############################################### Nav Bar Begins #########################################-->
+
+<!--Top Section-->
+{% block top-section %}
+    <img src="{% static 'doormot_app/carousel-1.jpg' %}"  alt="The house image" class="w-full h-full object-cover">
+{% endblock top-section %}
+
+<!--Top 2nd Section-->
+{% block top-2nd-section %}
+<div class="w-full h-70 flex justify-center">
+
+    <!-- Top call to action box -->
+    <div class="flex justify-between px-3 py-1 m-2">
+
+        <div class="rounded-lg p-5 bg-purple-950 shadow-md shadow-white border rounded-tl-3xl rounded-br-3xl mx-4">
+          
+            <div class="text-5xl font-serif py-2 m-2 font-extrabold text-orange-600 text-center my-4">
+              <h6>Discover Your<br>Perfect <span class="text-white">HOME</span></h6>
+            </div>
+            
+            <div class="flex justify-center gap-3">
+              <form action="{% url 'doormot-reg-users-register' %}" method="get">
+                  <button type="submit" class="bg-purple-700 hover:bg-orange-600 border border-orange-600 rounded-md text-white text-sm px-4 py-1">Register</button>
+              </form>
+              <form action="{% url 'doormot-reg-users-login' %}" method="get" class="">
+                  <button type="submit" class="bg-purple-700 hover:bg-orange-600 border border-orange-600 rounded-md text-white text-sm px-4 py-1">Login</button>
+              </form>    
+            </div>
+          </div>
+          
+        <div class="bg-white border rounded-tl-3xl rounded-br-3xl">
+        </div>
+    </div>
+
+    <div class="px-3 py-2 m-2 border shadow-sm shadow-white rounded-lg justify-center">
+        <div class="text-white text-center py-8">
+            <h2>No.1 place renters and buyers find the perfect property.</h2>
+            <p>Experience properties rentals and sales in the most modern way</p>
+        </div>
+        <div class="text-3xl font-serif p-2 m-2 font-extrabold text-white text-start">
+            <h6>Buy, Sell, Rent and Lease With Ease!</h6>
+        </div>
+    </div>
+</div>
+
+
+{% endblock top-2nd-section %}
+
+<!--Search Bar Section-->
+{% block serach-bar-section %}
+<form action="#" method="get" class="p-3">
+    <input type="text" name="#" placeholder="Search... towns, state, LGAs" class="w-80 text-black mx-2 py-1 text-center focus:outline-none">
+    <button type="submit" class="bg-purple-700 hover:bg-orange-600 border border-orange-600 rounded-md text-white text-sm px-4 py-1">Search</button>
+</form>
+{% endblock serach-bar-section %}
+<!--############################################## Nav Bar Ends ########################################-->
+
+
+
+<!----########################## First Scetion Block: House Cards Display Grid Section Begin #################-->
+
+<!--Available Properties-->
+{% block available-properties %}
+    <div class="text-center text-white text-xl font-serif bg-purple-950"><h1 class="p-1"> Browse Listed Properties</h1></div>
+{% endblock available-properties %}
+
+<!--First Column-->
+{% block first-section-column1 %}
+<div class="w-full md:w-1/4  px-2 py-3">
+    <div class="">
+        <div class="border border-full shadow-md shadow-gray-600 overflow-hidden">
+            <div class="border border-full shadow-md shadow-gray-600 overflow-hidden ">
+                <div class="m-3"><img src="{% static 'doormot_app/carousel-1.jpg' %}"   alt="The house image" class="w-full h-full object-cover"></div>
+                <div class="font-serif m-3">
+                    <small>The only building</small>
+                    <small>You will love it</small>
+                    <small>Hello World!</small>
+                    <div class="">
+                        <button action="#" method="get">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                            </svg>  
+                        </button>  
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <div class="w-full md:w-1/4  px-2 py-3">
+    <div class="">
+        <div class="border border-full shadow-md shadow-gray-600 overflow-hidden">
+            <div class="border border-full shadow-md shadow-gray-600 overflow-hidden ">
+                <div class="m-3"><img src="{% static 'doormot_app/carousel-1.jpg' %}"   alt="The house image" class="w-full h-full object-cover"></div>
+                <div class="font-serif m-3">
+                    <small>The only building</small>
+                    <small>You will love it</small>
+                    <small>Hello World!</small>
+                    <div class="">
+                        <button action="#" method="get">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                            </svg>  
+                        </button>  
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <div class="w-full md:w-1/4  px-2 py-3">
+    <div class="">
+        <div class="border border-full shadow-md shadow-gray-600 overflow-hidden">
+            <div class="border border-full shadow-md shadow-gray-600 overflow-hidden ">
+                <div class="m-3"><img src="{% static 'doormot_app/carousel-1.jpg' %}"   alt="The house image" class="w-full h-full object-cover"></div>
+                <div class="font-serif m-3">
+                    <small>The only building</small>
+                    <small>You will love it</small>
+                    <small>Hello World!</small>
+                    <div class="">
+                        <button action="#" method="get">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                            </svg>  
+                        </button>  
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <div class="w-full md:w-1/4  px-2 py-3">
+    <div class="">
+        <div class="border border-full shadow-md shadow-gray-600 overflow-hidden">
+            <div class="border border-full shadow-md shadow-gray-600 overflow-hidden ">
+                <div class="m-3"><img src="{% static 'doormot_app/carousel-1.jpg' %}"   alt="The house image" class="w-full h-full object-cover"></div>
+                <div class="font-serif m-3">
+                    <small>The only building</small>
+                    <small>You will love it</small>
+                    <small>Hello World!</small>
+                    <div class="">
+                        <button action="#" method="get">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                            </svg>  
+                        </button>  
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <div class="w-full md:w-1/4  px-2 py-3">
+    <div class="">
+        <div class="border border-full shadow-md shadow-gray-600 overflow-hidden">
+            <div class="border border-full shadow-md shadow-gray-600 overflow-hidden ">
+                <div class="m-3"><img src="{% static 'doormot_app/carousel-1.jpg' %}"   alt="The house image" class="w-full h-full object-cover"></div>
+                <div class="font-serif m-3">
+                    <small>The only building</small>
+                    <small>You will love it</small>
+                    <small>Hello World!</small>
+                    <div class="">
+                        <button action="#" method="get">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                            </svg>  
+                        </button>  
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <div class="w-full md:w-1/4  px-2 py-3">
+    <div class="">
+        <div class="border border-full shadow-md shadow-gray-600 overflow-hidden">
+            <div class="border border-full shadow-md shadow-gray-600 overflow-hidden ">
+                <div class="m-3"><img src="{% static 'doormot_app/carousel-1.jpg' %}"   alt="The house image" class="w-full h-full object-cover"></div>
+                <div class="font-serif m-3">
+                    <small>The only building</small>
+                    <small>You will love it</small>
+                    <small>Hello World!</small>
+                    <div class="">
+                        <button action="#" method="get">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                            </svg>  
+                        </button>  
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <div class="w-full md:w-1/4 px-2 py-3">
+    <div class="">
+        <div class="border border-full shadow-md shadow-gray-600 overflow-hidden">
+            <div class="border border-full shadow-md shadow-gray-600 overflow-hidden ">
+                <div class="m-3"><img src="{% static 'doormot_app/carousel-1.jpg' %}"   alt="The house image" class="w-full h-full object-cover"></div>
+                <div class="font-serif m-3">
+                    <small>The only building</small>
+                    <small>You will love it</small>
+                    <small>Hello World!</small>
+                    <div class="">
+                        <button action="#" method="get">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                            </svg>  
+                        </button>  
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+
+  <div class="w-full md:w-1/4 px-2 py-3">
+    <div class="">
+        <div class="border border-full shadow-md shadow-gray-600 overflow-hidden">
+            <div class="border border-full shadow-md shadow-gray-600 overflow-hidden ">
+                <div class="m-3"><img src="{% static 'doormot_app/carousel-1.jpg' %}"   alt="The house image" class="w-full h-full object-cover"></div>
+                <div class="font-serif m-3">
+                    <small>The only building</small>
+                    <small>You will love it</small>
+                    <small>Hello World!</small>
+                    <div class="">
+                        <button action="#" method="get">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                            </svg>  
+                        </button>  
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </div>
+{% endblock first-section-column1 %}
+
+<!--Load More Available Properties-->
+{% block more-properties%}
+    <div class="justify-center items-center flex">
+        <button type="submit" class="bg-purple-700 hover:bg-orange-600 border border-orange-600 rounded-md text-white text-sm px-4 py-1">Load More</button>
+    </div>
+{% endblock more-properties %}
+
+<!----#########################  First Section Block: House Cards Display Grid Section Ends #######################-->
+
+
+
+<!--######################################## Second Section Block Start ##############################-->
+
+    <!-- Second Section Column1-->
+{% block second-section-column1 %}
+    <div class="border-full border-2 border-purple-950">
+        <div class="overflow-hidden h-96 p-2">
+            <img src="{% static 'doormot_app/side_house.jpg' %}"  alt="The house image" class="w-full h-full object-cover">
+        </div>
+    </div>
+{% endblock second-section-column1 %}
+
+<!-- Second Section Column2-->
+{% block second-section-column2 %}
+    <div class="bg-purple-950 text-center text-1xl text-white font-serif font-extrabold">
+        <h1 class="py-2">Unlocking Your Comfort In One Click</h1>
+    </div>
+    <div class="p-3 font-serif">
+        <div class="p-1 m-2">
+            <h4>Find Your Ideal Property Today!</h4><br>
+            <p>
+                We specialize in turning your dreams into reality.<br>
+                We are your trusted partner in finding your befitting property.<br>
+                Connecting renters, buyers, and sellers seamlessly while prioritizing all parties best interests and safety.<br>
+                Take the first step towards a secure and swift journey to your new home.<br>
+                Click below to find your dream property now!"
+            </p>
+        </div> 
+        <div>
+            <button type="submit" class="bg-purple-700 hover:bg-orange-600 border border-orange-600 rounded-md text-white text-sm px-4 py-1">Find Your Dream Home</button>
+        </div>
+    </div>
+{% endblock second-section-column2 %}
+<!--######################################### Second Section Block Ends #################################-->
+
+
+<!--######################################### Third Section  Block Starts ####################################-->
+
+<!--How We Can Help You-->
+{% block how-we-help %}
+    <div class="text-center text-xl text-white font-serif bg-purple-950 border-2"><h1 class="p-1">Why we are the best</h1></div>
+{% endblock how-we-help %}
+
+<!--Help Service Buttons-->
+{% block help-service-buttons %}
+    <!--Rent Button-->
+    <div class="flex justify-center items-center">
+        <button type="submit" class="bg-purple-700 hover:bg-orange-600 border border-orange-600 text-white text-sm px-4 py-1 w-20">Renting</button>
+    </div>
+
+    <!--Buy Button-->
+    <div class="flex justify-center items-center">
+        <button type="submit" class="bg-purple-700 hover:bg-orange-600 border border-orange-600 text-white text-sm px-4 py-1 w-20">Buying</button>
+    </div>
+
+    <!--Sell Button-->
+    <div class="flex justify-center items-center">
+        <button type="submit" class="bg-purple-700 hover:bg-orange-600 border border-orange-600 text-white text-sm px-4 py-1 w-20">Selling</button>
+    </div>
+{% endblock help-service-buttons %}
+
+<!--Third Section Column1-->
+{% block third-section-column1 %}
+    <div class="bg-black text-center text-1xl text-white font-serif font-extrabold">
+    <h1 class="py-2">Available Agents Nationwide</h1>
+    </div>
+    <div class="p-3 font-serif">
+    <div class="p-1 m-2">
+        <h4>Our agents are available, everywhere, anywhere at all times!</h4>
+        <p>
+            We specialize in turning your dreams into reality.<br>
+            We are your trusted partner in finding your befitting properties.<br>
+            Connecting renters, buyers, and sellers seamlessly while prioritizing all parties best interests and safety.<br>
+            Take the first step towards a secure and swift journey to your new home.<br>
+            Click below to find your dream property now!"
+        </p>
+    </div> 
+    <div class="flex justify-center items-center">
+        <button type="submit" class="bg-purple-700 hover:bg-orange-600 border border-orange-600 rounded-md text-white text-sm px-4 py-1">Find Your Dream Home</button>
+    </div>
+    </div>
+{% endblock third-section-column1 %}
+
+<!--Third Section Column2-->
+{% block third-section-column2 %}
+    <div class="bg-black text-center text-1xl text-white font-serif font-extrabold">
+    <h1 class="py-2">Your security is our piority</h1>
+    </div>
+    <div class="p-3 font-serif">
+    <div class="p-1 m-2">
+        <h4>Your security is prioritized!</h4>
+        <p>
+            Our system is designed with your best interest at heart.<br>
+            We are your trusted partner in finding your befitting properties.<br>
+            Connecting renters, buyers, and sellers seamlessly while prioritizing all parties best interests and safety.<br>
+            Take the first step towards a secure and swift journey to your new home.<br>
+            Click below to find your dream property now!"
+        </p>
+    </div> 
+    <div class="flex justify-center items-center">
+        <button type="submit" class="bg-purple-700 hover:bg-orange-600 border border-orange-600 rounded-md text-white text-sm px-4 py-1">Find Your Dream Home</button>
+    </div>
+    </div>
+{% endblock third-section-column2 %}
+
+<!--Third Section Column3-->
+{% block third-section-column3 %}
+    <div class="bg-black text-center text-1xl text-white font-serif font-extrabold">
+    <h1 class="py-2">24/7 Customer Service</h1>
+    </div>
+    <div class="p-3 font-serif">
+    <div class="p-1 m-2">
+        <h4>Find Your Ideal Property Today!</h4>
+        <p>
+            We specialize in turning your dreams into reality.<br>
+            We are your trusted partner in finding your befitting properties.<br>
+            Connecting renters, buyers, and sellers seamlessly while prioritizing all parties best interests and safety.<br>
+            Take the first step towards a secure and swift journey to your new home.<br>
+            Click below to find your dream property now!"
+        </p>
+    </div> 
+    <div class="flex justify-center items-center">
+        <button type="submit" class="bg-purple-700 hover:bg-orange-600 border border-orange-600 rounded-md text-white text-sm px-4 py-1">Find Your Dream Home</button>
+    </div>
+    </div>
+{% endblock third-section-column3 %}
+
+<!--######################################### Third Section  Block Ends ####################################-->
+

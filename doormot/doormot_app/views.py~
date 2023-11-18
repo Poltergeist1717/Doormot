@@ -1,0 +1,10 @@
+from django.shortcuts import render
+
+def home(request):
+    return render(request, 'doormot_app/home.html', {"title":"Home"} )
+
+def about(request):
+        return render(request,'doormot_app/about.html', {"title":"About"})
+
+def login(request):
+            return render(request,'doormot_app/login.html', {"title":"Login"})

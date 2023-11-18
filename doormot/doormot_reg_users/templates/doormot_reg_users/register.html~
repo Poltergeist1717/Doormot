@@ -1,0 +1,25 @@
+{% extends  "doormot_app/base_temp.html" %}
+
+{% block navlist %}
+<a href="#" class="logo">Doormot</a>
+<ul class="navlist">
+  <li><a href="{% url 'doormot-reg-users-register' %}" class="active">REGISTER</a></li>
+  <li><a href="{% url 'doormot-reg-users-owner' %}">OWNER</a></li>
+  <li><a href="{% url 'doormot-reg-users-tenant' %}">TENANT</a></li>
+  <li><a href="{% url 'doormot-reg-users-agent' %}">AGENT</a></li>
+  <li><a href="{% url 'doormot-reg-users-partner' %}">PARTNER</a></li>
+</ul>
+
+{% block navlist-right-header %}
+<ul class="navlist">
+  <li><a href="{% url 'doormot-home' %}">Home</a></li>
+</ul>
+{% endblock navlist-right-header %}
+
+{% endblock navlist %}
+
+
+{% block first-section %}
+<h1>Register</h1>
+<p>You are now at the register page</p>
+{% endblock first-section %}

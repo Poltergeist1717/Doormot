@@ -1,0 +1,19 @@
+from django.shortcuts import render
+
+def register(request):
+            return render(request, 'doormot_reg_users/register.html', {'title':'register'})
+
+def tenant(request):
+            return render(request, 'doormot_reg_users/tenant.html', {'title':'tenant-registration'})
+
+def agent(request):
+            return render(request, 'doormot_reg_users/agent.html', {'title':'agent-registration'})
+
+def logistics(request):
+            return render(request, 'doormot_reg_users/logistics.html', {'title':'logistics-registration'})
+
+def owner(request):
+            return render(request, 'doormot_reg_users/owner.html', {'title':'owner-registration'})
+
+def partner(request):
+            return render(request, 'doormot_reg_users/partner.html', {'title':'partner-registration'})

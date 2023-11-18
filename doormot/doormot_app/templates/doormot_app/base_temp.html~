@@ -1,0 +1,53 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'doormot_app/styles.css' %}">
+    
+
+    {% if title %}
+    <title>Doormot - {{ title }} </title>
+    {% else %}
+    <title> Doormot </title>
+    {% endif  %}
+  </head>
+  <body>
+    <div class="doormot-top-navlist">
+      <header class="doormot-header">
+	{% block navlist %}
+	<a href="{% url 'doormot-home' %}" class="logo">Doormot</a>
+	<div class="doormot-nav-bar-1">
+	  <ul class="doormot-navlist-bar-1">
+	    <li><a href="{% url 'doormot-home' %}" class="active">HOME</a></li>
+	    <li><a href="{% url 'doormot-about' %}">ABOUT</a></li>
+	    <li><a href="{% url 'doormot-vision' %}">VISION</a></li>
+	    <li><a href="{% url 'doormot-team' %}">TEAM</a></li>
+	    <li><a href="{% url 'doormot-contact' %}">CONTACT</a></li>
+	  </ul>
+	</div>
+	  <div class="doormot-right-header">
+	    {% block navlist-right-header %}
+	    <div class="doormot-nav-bar-2">
+	      <ul class="doormot-navlist-bar-2">
+		<li><a href="{% url 'doormot-login' %}">Login</a></li>
+	        <li><a href="{% url 'doormot-reg-users-register' %}">Register</a></li>
+	      </ul>
+	    </div>
+	    {% endblock navlist-right-header %}
+	  </div>
+	 <button class="doormot-menu-toggle">&#9776;</button>
+	{% endblock navlist %}
+      </header>
+    </div>
+    <section>
+      <div>
+	{% block first-section %}{% endblock first-section %}
+      </div>
+    </section>
+    
+  </body>
+</html>

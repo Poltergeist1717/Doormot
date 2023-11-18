@@ -1,0 +1,6 @@
+{% extends  "doormot_app/base_temp.html" %}
+
+{% block first-section %}
+<h1>Tenant</h1>
+<p>You are now at the tenant page</p>
+{% endblock first-section %}

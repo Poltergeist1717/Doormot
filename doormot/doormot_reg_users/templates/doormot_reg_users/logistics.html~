@@ -1,0 +1,6 @@
+{% extends  "doormot_app/base_temp.html" %}
+
+{% block first-section %}
+<h1>Logistics</h1>
+<p>You are now at the logistics page</p>
+{% endblock first-section %}

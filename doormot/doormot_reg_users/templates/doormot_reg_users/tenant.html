@@ -1,0 +1,34 @@
+{% extends  "doormot_reg_users/register.html" %}
+{% load crispy_forms_tags %}
+{% load tailwind_filters %}
+{% load static %}
+
+
+{% block free-section %}
+<div class="bg-purple-950 hidden lg:flex lg:justify-center text-white">
+    <h6>REGISTER</h6>
+</div>
+
+<div class="flex justify-center gap-24 items-center md:py-10 px-5">
+
+    <div class="border-2 rounded-lg border-orange-600 bg-white">
+        <div class="overflow-hidden h-96 p-2">
+            <img src="{% static 'doormot_app/blog-1.jpg' %}"  alt="The house image" class="w-full h-full object-cover">
+        </div>
+    </div>
+    
+    <div class="px-5 mx-5 border border-full rounded-lg shadow-md shadow-gray-800  bg-slate-200 w-1/2">
+        <form method="post" class="p-4 m-2">
+            <legend class="py-3 my-3 text-center bg-purple-950 text-white"><small>Individual-Tenant-Registration</small></legend>
+            {% csrf_token %}
+            <div>
+                {{ form | crispy }}
+            </div>
+
+            <div class="flex justify-center items-center py-5">
+                <button type="submit" class="bg-purple-700 hover:bg-orange-600 border border-orange-600 rounded-md text-white text-sm px-4 py-1">Register</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock free-section %}

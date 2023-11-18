@@ -1,0 +1,14 @@
+{
+  "name": "doormot",
+  "version": "1.0.0",
+  "description": "Real Estate",
+  "scripts": {
+    "build_css": "tailwindcss build doormot_app/static/doormot_app/styles.css -o doormot_app/static/doormot_app/generated.css"
+  },
+  
+  "devDependencies": {
+    "autoprefixer": "^10.4.16",
+    "postcss": "^8.4.31",
+    "tailwindcss": "^3.3.3"
+  }
+}

@@ -1,0 +1,11 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+            path('', views.register, name='doormot-reg-users-register'),
+            path('tenant/', views.tenant, name='doormot-reg-users-tenant'),
+            path('agent/', views.agent, name='doormot-reg-users-agent'),
+            path('logistics/', views.logistics, name='doormot-reg-users-logistics'),
+            path('owner/', views.logistics, name='doormot-reg-users-owner'),
+            path('partner/', views.logistics, name='doormot-reg-users-partner'),
+        ]

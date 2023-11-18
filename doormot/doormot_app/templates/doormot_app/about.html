@@ -1,0 +1,31 @@
+{% extends  "doormot_app/base_temp.html" %}
+{% load static %}
+
+<!--############################################### Nav Bar Begins #########################################-->
+<!--Top Section-->
+{% block top-section %}
+<div class="h-72 overflow-hidden">
+    <img src="{% static 'doormot_app/blog-1.jpg' %}"  alt="The house image" class="w-full h-full object-cover">
+</div>
+{% endblock top-section %}
+
+<!--Top 2nd Section-->
+
+{% block top-2nd-section %}
+<div class="bg-black opacity-70 w-full h-70 grid grid-cols-2">
+    <div class="px-3 py-1 m-2 col-span-1">
+        <div class="text-5xl font-serif py-2 m-2 font-extrabold text-orange-600 text-center bg-black rounded-lg">
+        <h6>Discover Your<br>Perfect <span class="text-white">HOME</span></h6>
+        </div>
+    </div>
+    <div class="text-white px-3 py-2 m-2 col-span-1">
+        <p>Helping renters and buyers find the perfect property.</p>
+        <p>Explore and experience property rentals and sales in the most modern way</p>
+        <div class="text-3xl font-serif py-2 m-2 font-extrabold text-white text-start bg-black rounded-lg">
+            <h6>Buy, Sell, Rent and Lease With Ease!</h6>
+        </div>
+    </div>
+</div>
+{% endblock top-2nd-section %}
+
+<!--############################################## Nav Bar Ends ########################################-->
