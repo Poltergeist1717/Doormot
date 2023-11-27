@@ -1,0 +1,76 @@
+{% extends  "doormot_reg_users/login_base_temp.html" %}
+{% load crispy_forms_tags %}
+{% load tailwind_filters %}
+{% load static %}
+
+{% block free-section %}
+
+
+<div class="flex flex-wrap justify-center items-center md:py-10 ">
+    
+    <div class="p-5 mx-5 border border-full rounded-lg shadow-md shadow-gray-800 bg-slate-200 w-1/2">
+        <legend class="py-2 my-3 text-center bg-red-700 text-white font-extrabold text-lg">Your Account Has Been Disabled!</legend>
+        <div class="p-2 mx-5 justify-center">
+            {% if message %}
+                <div class=" text-red-700 border-red-700 border-2 text-center">
+                    <p>{{ message }}</p>
+                    <p>Kindly check your username and/or password!</p>
+                    <p>Please select the appropraite Account Type!</p>
+                    <p></p>
+                </div>
+            {% endif %}
+            <form id="typeForm" method="get" class="p-4 m-2" action="{% url 'doormot-reg-users-login' %}">
+                <legend class="py-2 my-3 text-center bg-orange-600 text-white font-extrabold text-lg">Please Select Your Account Type</legend>
+                <select id="userTypeSelect" name='user_type' class="bg-purple-950 text-white text-center w-full p-1">
+                    <option value="Individual_owner">Individual Owner</option>
+                    <option value="Private_org_owner">Private Org Owner</option>
+                    <option value="Individual_buyer">Individual Buyer</option>
+                    <option value="Private_org_buyer">Private Org Buyer</option>
+                    <option value="Individual_tenant">Individual Tenant</option>
+                    <option value="Private_org_tenant">Private Org Tenant</option>
+                    <option value="Official_agent">Official Agent</option>
+                    <option value="Independent_agent">Independent Agent</option>
+                </select>
+        
+                <div class="flex justify-center items-center py-2">
+                    <button type="submit" class="bg-purple-700 hover:bg-orange-600 border border-orange-600 rounded-md text-white text-sm px-4 py-1">Submit Account Type</button>
+                </div>
+            </form>
+        </div>
+
+        {% if user_type %}
+        <div class="px-5 m-3 justify-center border border-full border-orange-600 rounded-lg shadow-md shadow-orange-600 bg-slate-200">   
+            <div class="">
+                <form method="post" class="p-4 m-2" action="{% url 'doormot-reg-users-login' %}">
+                    <legend class="py-3 my-3 text-center bg-purple-950 text-white">{{ name }} Login</legend>
+                    
+                    {% csrf_token %}
+                    <div>
+                        {{ form | crispy }}
+    
+                        <div class="hidden">
+                            <h1 class="py-3 my-3 text-center font-sans font-extrabold text-red-600">Verification code sent to?</h1>
+                        <div class="justify-between flex">
+                            <div class="flex items-center justify-between">
+                                <input type="radio" id="otp_phone" name="otp_method" value="phone_number" class="form-radio h-5 w-5 text-blue-500">
+                                <label for="otp_phone" class="ml-2">Phone Number</label>
+                            </div>
+                            <div class="flex items-center justify-between">
+                                <input type="radio" id="otp_email" name="otp_method" value="email" class="form-radio h-5 w-5 text-blue-500">
+                                <label for="otp_email" class="ml-2">Email</label>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+        
+                    <div class="flex justify-center items-center py-5">
+                        <button type="submit" class="bg-purple-700 hover:bg-orange-600 border border-orange-600 rounded-md text-white text-sm px-4 py-1">Login</button>
+                    </div>
+                </form>
+            </div>    
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock free-section %}

@@ -7,16 +7,17 @@ from .models import Doormot_User_Individual_Owner, Doormot_User_Private_Organiza
 logger = logging.getLogger(__name__)
 
 class DoormotCustomUserBackend(ModelBackend):
+
     def authenticate(self, request, user_type=None, username=None, email=None, password=None, **kwargs):
 
         if user_type == "Individual_owner":
             try:
                 user = Doormot_User_Individual_Owner.objects.get(username=username) if username else Doormot_User_Individual_Owner.objects.get(email=email)
-                if user and user.check_password(password):
+                if user.check_password(password):
                     return user
-                return None
             except ObjectDoesNotExist as e:
                 logger.exception('There was an error: %s', e)
+                return None
            
 
         elif user_type == "Private_org_owner":

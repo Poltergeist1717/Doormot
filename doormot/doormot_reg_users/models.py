@@ -1,8 +1,11 @@
 from django.db import models
-from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin, Permission, Group
 from django.contrib.auth import validators
 from django.utils import timezone
 from django.core.exceptions import ValidationError
+from .doormot_reg_modules import rand
+from django.contrib.contenttypes.fields import GenericRelation
+
 
 
 
@@ -31,14 +34,22 @@ class CustomUserManager(BaseUserManager):
         user = self.model(username=username, email=self.normalize_email(email), phone_number=phone_number)
         user.set_password(password)
         user.save(using=self._db)
+
+        
         return user
 
-    def create_superuser(self, username, email, password=None):
-        user = self.create_user(username, email, password)
-        user.is_active = True
-        user.is_staff = True
-        user.save(using=self._db)
-        return user
+    def create_superuser(self, username, email, password=None, **extra_fields):
+
+        extra_fields.setdefault('is_staff', True)
+        extra_fields.setdefault('is_superuser', True)
+
+        if extra_fields.get('is_staff') is not True:
+            raise ValueError('Superuser must have is_staff=True.')
+
+        if extra_fields.get('is_superuser') is not True:
+            raise ValueError('Superuser must have is_superuser=True.')
+
+        return self.create_superuser(username, email, password, **extra_fields)
 
 
 
@@ -123,8 +134,27 @@ class Doormot_User_Individual_Owner_Details(models.Model):
     
 
 
-class Doormot_User_Individual_Owner(AbstractBaseUser):
+class Doormot_User_Individual_Owner(AbstractBaseUser, PermissionsMixin):
     individual_tenant_details = models.OneToOneField(Doormot_User_Individual_Owner_Details, on_delete=models.CASCADE, null=True, blank=True)
+
+    user_permissions = models.ManyToManyField(
+        Permission,
+        verbose_name = 'user permissions',
+        blank = True,
+        related_name = 'Doormot_User_Individual_Owner_Perm',
+    )
+
+    groups = models.ManyToManyField(
+        Group, 
+        verbose_name='groups', 
+        blank=True, 
+        related_name='individual_owner_groups'
+    )
+
+    user_id = models.CharField(max_length=50, unique=True, default=None)
+
+    to_let_listings = GenericRelation('doormot_property_listing.To_Let_Listed_Properties')
+    for_sale_listings = GenericRelation('doormot_property_listing.For_Sale_Listed_Properties')
 
     username = models.CharField(max_length=30, unique=True, null=False, blank=False)
     email = models.EmailField(unique=True, null=False, blank=False)
@@ -132,6 +162,16 @@ class Doormot_User_Individual_Owner(AbstractBaseUser):
 
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            current_date = timezone.now().date()
+            random = rand()
+            random_alphanumeric = random.alphanumeric()
+            random_int = random.generate_random_number()
+
+            self.user_id = f"IND/OWN/{random_int}/{random_alphanumeric}/{current_date}"
+        super().save(*args, **kwargs)
 
     objects = CustomUserManager()
 
@@ -214,7 +254,7 @@ class Doormot_User_Individual_Owner_Next_Of_Kin(models.Model):
 
 
 # PRIVATE ORGANIZATION OWNER MODEL
-class Doormot_User_Private_Organization_Owner(AbstractBaseUser):
+class Doormot_User_Private_Organization_Owner(AbstractBaseUser, PermissionsMixin):
 
     
     ORGANIZATION_TYPE_CHOICES = [
@@ -222,6 +262,35 @@ class Doormot_User_Private_Organization_Owner(AbstractBaseUser):
         ('N', 'Non-Profit'),
         ('U', 'Prefer not to say'),
     ]
+
+    user_permissions = models.ManyToManyField(
+        Permission,
+        verbose_name = 'user permissions',
+        blank = True,
+        related_name = 'Doormot_User_Private_Organization_Owner_Perm',
+    )
+
+    groups = models.ManyToManyField(
+        Group, 
+        verbose_name='groups', 
+        blank=True, 
+        related_name='private_org_owner_groups'
+    )
+    to_let_listings = GenericRelation('doormot_property_listing.To_Let_Listed_Properties')
+    for_sale_listings = GenericRelation('doormot_property_listing.For_Sale_Listed_Properties')
+
+    user_id = models.CharField(max_length=50, unique=True, default=None)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            current_date = timezone.now().date()
+            random = rand()
+            random_alphanumeric = random.alphanumeric()
+            random_int = random.generate_random_number()
+
+            self.user_id = f"PRV/ORG/OWN/{random_int}/{random_alphanumeric}/{current_date}"
+        super().save(*args, **kwargs)
+
 
     organization_type = models.CharField(null=False, blank=False, max_length=40, choices=ORGANIZATION_TYPE_CHOICES,  default=None)
 
@@ -353,8 +422,34 @@ class Doormot_User_Individual_Buyer_Details(models.Model):
     
 
 
-class Doormot_User_Individual_Buyer(AbstractBaseUser):
+class Doormot_User_Individual_Buyer(AbstractBaseUser, PermissionsMixin):
     individual_tenant_details = models.OneToOneField(Doormot_User_Individual_Buyer_Details, on_delete=models.CASCADE, null=True, blank=True)
+
+    user_permissions = models.ManyToManyField(
+        Permission,
+        verbose_name = 'user permissions',
+        blank = True,
+        related_name = 'Doormot_User_Individual_Buyer_Perm',
+    )
+
+    groups = models.ManyToManyField(
+        Group, 
+        verbose_name='groups', 
+        blank=True, 
+        related_name='individual_buyer_groups'
+    )
+
+    user_id = models.CharField(max_length=50, unique=True, default=None)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            current_date = timezone.now().date()
+            random = rand()
+            random_alphanumeric = random.alphanumeric()
+            random_int = random.generate_random_number()
+
+            self.user_id = f"IND/BYR/{random_int}/{random_alphanumeric}/{current_date}"
+        super().save(*args, **kwargs)
 
     username = models.CharField(max_length=30, unique=True, null=False, blank=False)
     email = models.EmailField(unique=True, null=False, blank=False)
@@ -444,7 +539,7 @@ class Doormot_User_Individual_Buyer_Next_Of_Kin(models.Model):
 
 
 # PRIVATE ORGANIZATION OWNER MODEL
-class Doormot_User_Private_Organization_Buyer(AbstractBaseUser):
+class Doormot_User_Private_Organization_Buyer(AbstractBaseUser, PermissionsMixin):
 
     
     ORGANIZATION_TYPE_CHOICES = [
@@ -452,6 +547,32 @@ class Doormot_User_Private_Organization_Buyer(AbstractBaseUser):
         ('N', 'Non-Profit'),
         ('U', 'Prefer not to say'),
     ]
+
+    user_permissions = models.ManyToManyField(
+        Permission,
+        verbose_name = 'user permissions',
+        blank = True,
+        related_name = 'Doormot_User_Private_Organization_Buyer_Perm',
+    )
+
+    groups = models.ManyToManyField(
+        Group, 
+        verbose_name='groups', 
+        blank=True, 
+        related_name='private_org_buyer_groups'
+    )
+
+    user_id = models.CharField(max_length=50, unique=True, default=None)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            current_date = timezone.now().date()
+            random = rand()
+            random_alphanumeric = random.alphanumeric()
+            random_int = random.generate_random_number()
+
+            self.user_id = f"PRV/ORG/BYR/{random_int}/{random_alphanumeric}/{current_date}"
+        super().save(*args, **kwargs)
 
     organization_type = models.CharField(null=False, blank=False, max_length=40, choices=ORGANIZATION_TYPE_CHOICES,  default=None)
 
@@ -580,8 +701,34 @@ class Doormot_User_Individual_Tenant_Details(models.Model):
     date_of_birth = models.DateField(null=False, blank=False, default=timezone.now)
     
 
-class Doormot_User_Individual_Tenant(AbstractBaseUser):
+class Doormot_User_Individual_Tenant(AbstractBaseUser, PermissionsMixin):
     individual_tenant_details = models.OneToOneField(Doormot_User_Individual_Tenant_Details, on_delete=models.CASCADE, null=True, blank=True)
+
+    user_permissions = models.ManyToManyField(
+        Permission,
+        verbose_name = 'user permissions',
+        blank = True,
+        related_name = 'Doormot_User_Individual_Tenant_Perm',
+    )
+
+    groups = models.ManyToManyField(
+        Group, 
+        verbose_name='groups', 
+        blank=True, 
+        related_name='individual_tenant_groups'
+    )
+
+    user_id = models.CharField(max_length=50, unique=True, default=None)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            current_date = timezone.now().date()
+            random = rand()
+            random_alphanumeric = random.alphanumeric()
+            random_int = random.generate_random_number()
+
+            self.user_id = f"IND/TNT/{random_int}/{random_alphanumeric}/{current_date}"
+        super().save(*args, **kwargs)
 
     username = models.CharField(max_length=30, unique=True, null=False, blank=False)
     email = models.EmailField(unique=True, null=False, blank=False)
@@ -671,7 +818,7 @@ class Doormot_User_Individual_Tenant_Next_Of_Kin(models.Model):
 
 
 # PRIVATE ORGANIZATION TENANT MODEL
-class Doormot_User_Private_Organization_Tenant(AbstractBaseUser):
+class Doormot_User_Private_Organization_Tenant(AbstractBaseUser, PermissionsMixin):
 
     
     ORGANIZATION_TYPE_CHOICES = [
@@ -679,6 +826,32 @@ class Doormot_User_Private_Organization_Tenant(AbstractBaseUser):
         ('N', 'Non-Profit'),
         ('U', 'Prefer not to say'),
     ]
+
+    user_permissions = models.ManyToManyField(
+        Permission,
+        verbose_name = 'user permissions',
+        blank = True,
+        related_name = 'Doormot_User_Private_Organization_Tenant_Perm',
+    )
+
+    groups = models.ManyToManyField(
+        Group, 
+        verbose_name='groups', 
+        blank=True, 
+        related_name='private_org_tenant_groups'
+    )
+
+    user_id = models.CharField(max_length=50, unique=True, default=None)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            current_date = timezone.now().date()
+            random = rand()
+            random_alphanumeric = random.alphanumeric()
+            random_int = random.generate_random_number()
+
+            self.user_id = f"PRV/ORG/TNT/{random_int}/{random_alphanumeric}/{current_date}"
+        super().save(*args, **kwargs)
 
     organization_type = models.CharField(null=False, blank=False, max_length=40, choices=ORGANIZATION_TYPE_CHOICES,  default=None)
 
@@ -818,9 +991,38 @@ class Doormot_User_Official_Agent_Details(models.Model):
     date_of_birth = models.DateField(null=False, blank=False, default=timezone.now)
 
 
-class Doormot_User_Official_Agent(AbstractBaseUser):
+class Doormot_User_Official_Agent(AbstractBaseUser, PermissionsMixin):
 
     official_agent_details = models.OneToOneField(Doormot_User_Official_Agent_Details, on_delete=models.CASCADE, null=True, blank=True)
+
+    user_permissions = models.ManyToManyField(
+        Permission,
+        verbose_name = 'user permissions',
+        blank = True,
+        related_name = 'Doormot_User_Official_Agent_Perm',
+    )
+
+    groups = models.ManyToManyField(
+        Group, 
+        verbose_name='groups', 
+        blank=True, 
+        related_name='official_agent_groups'
+    )
+
+    to_let_listings = GenericRelation('doormot_property_listing.To_Let_Listed_Properties')
+    for_sale_listings = GenericRelation('doormot_property_listing.For_Sale_Listed_Properties')
+    
+    agent_id = models.CharField(max_length=50, unique=True, default=None)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            current_date = timezone.now().date()
+            random = rand()
+            random_alphanumeric = random.alphanumeric()
+            random_int = random.generate_random_number()
+
+            self.agent_id = f"OFCL/AGNT/{random_int}/{random_alphanumeric}/{current_date}"
+        super().save(*args, **kwargs)
 
     username = models.CharField(max_length=30, unique=True, null=False, blank=False)
     email = models.EmailField(unique=True, null=False, blank=False)
@@ -1039,6 +1241,35 @@ class Doormot_User_Independent_Agent_Details(models.Model):
 class Doormot_User_Independent_Agent(AbstractBaseUser):
 
     independent_agent_details = models.OneToOneField(Doormot_User_Independent_Agent_Details, on_delete=models.CASCADE, null=True, blank=True)
+
+    user_permissions = models.ManyToManyField(
+        Permission,
+        verbose_name = 'user permissions',
+        blank = True,
+        related_name = 'Doormot_User_Independent_Agent_Perm',
+    )
+
+    groups = models.ManyToManyField(
+        Group, 
+        verbose_name='groups', 
+        blank=True, 
+        related_name='indipendent_agent_groups'
+    )
+
+    to_let_listings = GenericRelation('doormot_property_listing.To_Let_Listed_Properties')
+    for_sale_listings = GenericRelation('doormot_property_listing.For_Sale_Listed_Properties')
+
+    agent_id = models.CharField(max_length=50, unique=True, default=None)
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            current_date = timezone.now().date()
+            random = rand()
+            random_alphanumeric = random.alphanumeric()
+            random_int = random.generate_random_number()
+
+            self.agent_id = f"INDP/AGNT/{random_int}/{random_alphanumeric}/{current_date}"
+        super().save(*args, **kwargs)
     
     username = models.CharField(max_length=30, unique=True, null=False, blank=False)
     email = models.EmailField(unique=True, null=False, blank=False)

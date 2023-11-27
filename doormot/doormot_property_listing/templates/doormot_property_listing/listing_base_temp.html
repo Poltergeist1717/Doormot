@@ -1,0 +1,113 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{% static 'doormot_app/generated.css' %}">
+    <script src="{% static 'doormot_app/base_main.js' %}"></script>
+
+    
+    {% if title %}
+    <title>Doormot - {{ title }} </title>
+    {% else %}
+    <title> Doormot </title>
+    {% endif %}
+    
+  </head>
+  <body class="bg-slate-100 space-y-16">
+    <div class="container">
+        <!--Background Image Container Scetion-->
+        <div class="w-screen">
+          <!--Top Section Block-->
+          <div class="relative w-screen h-auto">
+            {% block top-section %}{% endblock top-section %}   
+          </div>
+        </div>
+
+        <!--Nav Bar Main Section-->
+        <div class="flex fixed top-0 justify-between w-screen border shadow-md shadow-gray-800 bg-purple-950">
+          
+          <!----logo Section-->
+          <div class="px-3 m-2">
+            <div class="text-xl font-extrabold text-orange-600">
+              <span><a href="{% url 'doormot-home' %}">Doormot</a></span>
+            </div>
+          </div>
+  
+        <!--Search Bar Section-->
+        <div class="flex justify-center items-center">
+          {% block serach-bar-section %}
+          {% endblock serach-bar-section %}
+        </div> 
+          
+          <!----nav-bar menu section-->
+          <div class="p-x m-2 block md:flex justify-between">
+
+            <div class="p-x m-2">
+              <ul class="block sm:hidden md:flex space-x-5 text-white">
+                {% block navlist %}
+                {% if user.is_authenticated and user_type in allowed_user_type %}
+                <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-property-listing-upload-property' %}">PROPERTY</a></li>
+                <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-about' %}">ABOUT US</a></li>
+                <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-property-listing-general-listing' %}">LISTINGS</a></li>
+                <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-team' %}">TEAM</a></li>
+                <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-contact' %}">CONTACT</a></li>
+                {% else %}
+                <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-about' %}">ABOUT US</a></li>
+                <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-property-listing-general-listing' %}">LISTINGS</a></li>
+                <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-team' %}">TEAM</a></li>
+                <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-contact' %}">CONTACT</a></li>
+                {% endif %}  
+                {% endblock navlist%}
+              </ul>
+            </div>
+    
+            <!----log menu section-->
+            <div class="md:mx-11">
+              <ul class="blcok sm:hidden md:flex space-x-4 text-white text-xs">
+                {% block navlist-right-header %}
+                {% if user.is_authenticated %}
+                <li class="m-2 md:border md:border-full md:justify-center md:items-center md:border-orange-600 md:rounded-full px-2 py-1 md:bg-purple-700 md:hover:bg-orange-600"><a href=" {% url 'doormot_users_profiles_profile_views' username=user.username %}"><small>Profile</small></a></li>
+                <li class="m-2 md:border md:border-full md:justify-center md:items-center md:border-orange-600 md:rounded-full px-2 py-1 md:bg-purple-700 md:hover:bg-orange-600"><a href="{% url 'doormot_custom_logout' %}"><small>Log out</small></a></li>
+                {% else %}
+                <li class="m-2 md:border md:border-full md:justify-center md:items-center md:border-orange-600 md:rounded-full px-2 py-1 md:bg-purple-700 md:hover:bg-orange-600"><a href="{% url 'doormot-reg-users-login' %}"><small>Login</small></a></li>
+                <li class="m-2 md:border md:border-full md:justify-center md:items-center md:border-orange-600 md:rounded-full px-2 py-1 md:bg-purple-700 md:hover:bg-orange-600"><a href="{% url 'doormot-reg-users-register' %}"><small>Sign up</small></a></li>
+                {% endif %}
+                {% endblock navlist-right-header %}
+              </ul>
+            </div>
+          </div>
+  
+          <!----Harmburger Section-->
+          <div class="px-4 m-2 md:hidden" id="nav-bar-toogle">
+            <button class="text-white">
+              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
+              </svg>
+            </button>
+          </div>
+        </div> 
+    </div>
+    
+
+    <!--###################################################### Free Section Starts #################################################--> 
+
+    <section>
+      {% block free-section %}{% endblock free-section %}
+    </section>
+
+    <!--###################################################### Free Section Ends #################################################--> 
+
+
+    <!--######################################### Footer Section Starts ####################################-->
+    <section>
+      <div class="footer bg-purple-950 w-screen p-3 bottom-0 fixed">
+
+      </div>
+    </section>
+    
+  </body>
+</html>

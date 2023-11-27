@@ -7,7 +7,7 @@
     
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{% static 'doormot_app/generated.css' %}">
-    <!---<script src="{% static 'doormot_app/doormot_main.js' %}"></script>-->
+    <script src="{% static 'doormot_app/base_main.js' %}"></script>
 
     
     {% if title %}
@@ -17,7 +17,7 @@
     {% endif %}
     
   </head>
-  <body class="bg-slate-100 space-y-56">
+  <body class="bg-slate-100 space-y-44">
     <div class="container">
         <!--Background Image Container Scetion-->
         <div class="w-screen">
@@ -57,7 +57,7 @@
                 {% block navlist %}
                 <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-home' %}">HOME</a></li>
                 <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-about' %}">ABOUT US</a></li>
-                <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-listing' %}">LISTINGS</a></li>
+                <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-property-listing-general-listing' %}">LISTINGS</a></li>
                 <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-team' %}">TEAM</a></li>
                 <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-contact' %}">CONTACT</a></li>  
                 {% endblock navlist%}
@@ -69,8 +69,8 @@
               <ul class="blcok sm:hidden md:flex space-x-4 text-white text-xs">
                 {% block navlist-right-header %}
                 {% if user.is_authenticated %}
-                <li class="m-2 md:border md:border-full md:justify-center md:items-center md:border-orange-600 md:rounded-full px-2 py-1 md:bg-purple-700 md:hover:bg-orange-600"><a href=" {% url 'doormot_users_profiles_individual_owner_profile' %}"><small>Profile</small></a></li>
-                <li class="m-2 md:border md:border-full md:justify-center md:items-center md:border-orange-600 md:rounded-full px-2 py-1 md:bg-purple-700 md:hover:bg-orange-600"><a href="#"><small>Log out</small></a></li>
+                <li class="m-2 md:border md:border-full md:justify-center md:items-center md:border-orange-600 md:rounded-full px-2 py-1 md:bg-purple-700 md:hover:bg-orange-600"><a href=" {% url 'doormot_users_profiles_profile_views' username=user.username %}"><small>Profile</small></a></li>
+                <li class="m-2 md:border md:border-full md:justify-center md:items-center md:border-orange-600 md:rounded-full px-2 py-1 md:bg-purple-700 md:hover:bg-orange-600"><a href="{% url 'doormot_custom_logout' %}"><small>Log out</small></a></li>
                 {% else %}
                 <li class="m-2 md:border md:border-full md:justify-center md:items-center md:border-orange-600 md:rounded-full px-2 py-1 md:bg-purple-700 md:hover:bg-orange-600"><a href="{% url 'doormot-reg-users-login' %}"><small>Login</small></a></li>
                 <li class="m-2 md:border md:border-full md:justify-center md:items-center md:border-orange-600 md:rounded-full px-2 py-1 md:bg-purple-700 md:hover:bg-orange-600"><a href="{% url 'doormot-reg-users-register' %}"><small>Sign up</small></a></li>

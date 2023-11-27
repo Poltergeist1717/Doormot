@@ -32,10 +32,12 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     "doormot_app.main_app.DoormotAppConfig",
+    "doormot_property_listing.apps.DoormotPropertyListingConfig",
     "doormot_reg_users.apps.DoormotRegUsersConfig",
     "doormot_users_profiles.apps.DoormotUsersProfilesConfig",
     'crispy_forms',
     'crispy_tailwind',
+    'django_countries',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -54,6 +56,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+SESSION_COOKIE_AGE = 1209600
+SESSION_SAVE_EVERY_REQUEST = True
+
 ROOT_URLCONF = 'doormot.urls'
 
 TEMPLATES = [
@@ -64,6 +70,7 @@ TEMPLATES = [
             BASE_DIR / 'doormot_app/templates/',
             BASE_DIR / 'doormot_reg_users/templates',
             BASE_DIR / 'doormot_users_profiles/templates',
+            BASE_DIR / 'doormot_property_listing/templates',
         ],
         'APP_DIRS': True,
         'OPTIONS': {

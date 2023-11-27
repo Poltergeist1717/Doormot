@@ -1,3 +1,180 @@
+
+
+
+
+
+class post_property(View):
+    def get(self, request):
+        for_sale = request.GET.get('for_sale')
+        request.session['for_sale'] = for_sale
+        allowed_user_type = ['Individual_owner', 'Private_org_owner', 'Independent_agent', 'Official_agent']
+
+        user_type = request.session.get('user_type')
+        user_pk = request.session.get('user')
+        user = return_user_object(user_pk, user_type)
+
+        form = None
+        name = None
+
+        if for_sale == "Yes":
+            name = "For Sale Property"
+            form = For_Sale_Listed_Properties_Form(request.POST, request.FILES)
+        elif for_sale == "No":
+            name = "To Let Property"
+            form = To_Let_Listed_Properties_Form(request.POST, request.FILES)
+
+        return render(request, 'doormot_property_listing/upload_property.html', {'user':user, 'user_type':user_type, 'allowed_user_type':allowed_user_type, 'form':form, 'name':name})
+        
+
+    def post(self, request):
+        user_type = request.session.get('user_type', 'Individual_owner')
+        user_pk = request.session.get('user')
+        for_sale = request.session.get('for_sale')
+        
+
+        max_image_size = 1 * 1024 * 1024 
+
+        allowed_user_type = ['Individual_owner', 'Private_org_owner', 'Independent_agent', 'Official_agent']
+        if user_type not in allowed_user_type:
+            print('You are not a recognized user!')
+            return render(request, 'doormot_property_listing/listing.html', {"title":"Listing", "user":user, 'allowed_user_type':allowed_user_type})
+        else:
+            user = return_user_object(user_pk, user_type)
+
+        form = None
+        if for_sale == "Yes":
+            name = "For Sale Property"
+            form = For_Sale_Listed_Properties_Form(request.POST, request.FILES)
+        elif for_sale == "No":
+            name = "To Let Property"
+            form = To_Let_Listed_Properties_Form(request.POST, request.FILES)      
+        
+        if request.method == 'POST':
+
+            images = request.FILES.getlist('images')
+
+            if form.is_valid(): 
+                if for_sale == "Yes":
+                    try:
+                        property_instance = For_Sale_Listed_Properties.objects.create(
+                            uploaded_by=user,
+                            title=title,
+                            closest_landmark=closest_landmark,
+                            description=description,
+
+                            asking_price=asking_price,
+                            property_status=property_status,
+                            property_type=property_type,
+
+                            no_of_livingrooms=no_of_livingrooms,
+                            no_of_bedrooms=no_of_bedrooms,
+                            no_of_bathrooms=no_of_bathrooms,
+                            no_of_kitchens=no_of_kitchens,
+
+                            size_of_property_by_square_footage=size_of_property_by_square_footage,
+                            size_of_property_by_plot=size_of_property_by_plot,
+
+                            address=address,
+                            city=city,
+                            state=state,
+                            zip_code=zip_code,
+                            local_government=local_government,
+                        )
+                            
+                        property_instance.save()
+                    except Exception as e:
+                        property_instance.delete()
+                        message = f"There was an Error: {e}. Please start over aagain!"
+                        return render(request, 'doormot_property_listing/upload_property.html', {'user':user, 'user_type':user_type, 'allowed_user_type':allowed_user_type, 'form':form, 'name':name, 'message':message})
+
+       
+                elif for_sale == "No":
+                    try:
+                        property_instance = To_Let_Listed_Properties.objects.create(
+                            uploaded_by=user,
+                            title=title,
+                            closest_landmark=closest_landmark,
+                            description=description,
+
+                            rent_price=rent_price,
+                            property_status=property_status,
+                            property_type=property_type,
+
+                            bathroom_is_available=bathroom_is_available,
+                            toilet_is_available=toilet_is_available,
+                            water_is_available=water_is_available,
+                            good_power_supply=good_power_supply,
+                            owner_lives_in_property=owner_lives_in_property,
+
+                            address=address,
+                            city=city,
+                            state=state,
+                            zip_code=zip_code,
+                            local_government=local_government,
+                        )
+                            
+                        property_instance.save()
+                    except Exception as e:
+                        property_instance.delete()
+                        message = f"There was an Error: {e}. Please start over aagain!"
+                        return render(request, 'doormot_property_listing/upload_property.html', {'user':user, 'user_type':user_type, 'allowed_user_type':allowed_user_type, 'form':form, 'name':name, 'message':message})
+
+                    
+                
+                if len(images) <=12:
+                    try:
+                        if not image.content_type.startwith('image'):
+                            raise ValidationError("File is not an image. Please upload images only")
+                            
+                        for file in images:
+                            if file.size > max_image_size:
+                                # handles case where an image is too large
+                                message = "You cannot upload an image over 1MB in size!"
+                                return render(request, 'doormot_property_listing/upload_property.html', {'user':user, 'user_type':user_type, 'allowed_user_type':allowed_user_type, 'form':form, 'name':name, 'message':message})
+                            
+                            if for_sale == "Yes":
+                                property_image_instance = For_Sale_Properties_Images.objects.create(
+                                    connected_property = property_instance,
+                                    images = image
+                                )
+                            
+                            if for_sale == "No":
+                                property_image_instance = To_Let_Properties_Images.objects.create(
+                                    connected_property = property_instance,
+                                    images = image
+                                )
+                    except ValidationError as e:
+                        # handle validation error
+                        property_instance.delete()
+                        message = f"There was an Error {e}. Please "
+                        return render(request, 'doormot_property_listing/upload_property.html', {'user':user, 'user_type':user_type, 'allowed_user_type':allowed_user_type, 'form':form, 'name':name, 'message':message})                   
+                else:
+                    # handles case where more than 12 images are selected
+                    property_instance.delete()
+                    message = "You cannot upload more than 12 images!"
+                    return render(request, 'doormot_property_listing/upload_property.html', {'user':user, 'user_type':user_type, 'allowed_user_type':allowed_user_type, 'form':form, 'name':name, 'message':message})
+            else:
+                form = To_Let_Listed_Properties_Form()
+                message = "Something was wrong with form validation! \n Please choose if property is for sale"
+                return render(request, 'doormot_property_listing/upload_property.html', {'user':user, 'user_type':user_type, 'allowed_user_type':allowed_user_type, 'form':form, 'name':name, 'message':message})
+            
+
+        success_message = "Congratulations, you have uploaded a property successfully! \n Please choose if property is for sale to upload another one."
+        return render(request, 'doormot_property_listing/upload_property.html', {'user':user, 'user_type':user_type, 'allowed_user_type':allowed_user_type, 'form':form, 'name':name, 'message':success_message})
+            
+
+
+
+
+
+
+
+
+
+
+
+
+
 <!--Agent Information-->
 password 
 last_login 

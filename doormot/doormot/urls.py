@@ -22,7 +22,6 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('doormot_app.urls')),
     path('register/', include('doormot_reg_users.urls')),
-    path('individual_owner_profile/', include('doormot_users_profiles.urls')),
-    # path('login/', auth_views.LoginView.as_view(template_name='doormot_app/login.html'), name='doormot-login'),
-    path('logout/', auth_views.LogoutView.as_view(template_name='doormot_app/logout.html'), name='doormot-logout')
+    path('user_profiles/', include('doormot_users_profiles.urls')),
+    path('properties/', include('doormot_property_listing.urls')),
          ]

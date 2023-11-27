@@ -1,4 +1,4 @@
-def load_listig_in_batches_of_forty():
+def load_properties_in_batches_of_forty():
     all_listed_properties = properties.objects.all()
     list_of_properties_in_batches = []
     listed_properties_length = len(all_listed_properties)

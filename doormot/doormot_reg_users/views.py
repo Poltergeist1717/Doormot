@@ -2,42 +2,44 @@ from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Submit
+from django.contrib.auth.views import LoginView
 from django.views import View
-from .forms import Individual_owner_registeration_form, Individual_Owner_Login_Form, Private_Organizations_Owner_Registeration_Form, Private_Organizations_Owner_Login_Form, Individual_buyer_registeration_form, Individual_Buyer_Login_Form, Private_Organizations_Buyer_Registeration_Form, Private_Organizations_Buyer_Login_Form, Individual_Tenant_Registration_Form, Individual_Tenant_Login_Form, Private_Organization_Tenant_Registration_Form, Private_Organization_Tenant_Login_Form, Official_Agent_Registration_Form, Official_Agent_Login_Form, Doormot_User_Independent_Agent_Registration_Form, Doormot_User_Independent_Agent_Login_Form
+from .backends import DoormotCustomUserBackend
+from .doormot_reg_module2 import retrun_form_type
+# from .forms import (
+#     Individual_owner_registeration_form,
+#     Individual_Owner_Login_Form,
+#     Private_Organizations_Owner_Registeration_Form, 
+#     Private_Organizations_Owner_Login_Form, 
+#     Individual_buyer_registeration_form, 
+#     Individual_Buyer_Login_Form, 
+#     Private_Organizations_Buyer_Registeration_Form, 
+#     Private_Organizations_Buyer_Login_Form, 
+#     Individual_Tenant_Registration_Form, 
+#     Individual_Tenant_Login_Form, 
+#     Private_Organization_Tenant_Registration_Form, 
+#     Private_Organization_Tenant_Login_Form, 
+#     Official_Agent_Registration_Form, 
+#     Official_Agent_Login_Form, 
+#     Doormot_User_Independent_Agent_Registration_Form, 
+#     Doormot_User_Independent_Agent_Login_Form
 
+# )
 
-class DoormotCustomLoginView(View):
-    user_type = None
+class DoormotCustomLoginView(LoginView):
     def get(self, request):
         name = None
-        user_type = request.GET.get('user_type', 'Individual_owner')
+        user_type = request.GET.get('user_type')
 
         request.session['user_type'] = user_type
         name = user_type
-        
-        # Determine user type and render the appropriate login form
-        if user_type == 'Individual_owner':
-            form = Individual_Owner_Login_Form()
-        if user_type == 'Private_org_owner':
-            form = Private_Organizations_Owner_Login_Form()
 
-        
-        if user_type == 'Individual_buyer':
-            form = Individual_Buyer_Login_Form()        
-        if user_type == 'Private_org_buyer':
-            form = Private_Organizations_Buyer_Login_Form()
-        
-        if user_type == 'Individual_tenant':
-            form = Individual_Tenant_Login_Form()
-        if user_type == 'Private_org_tenant':
-            form = Private_Organization_Tenant_Login_Form()
+        form = retrun_form_type(user_type)
 
-        if user_type == 'Official_agent':
-            form = Official_Agent_Login_Form()
-        if user_type == 'Independent_agent':
-            form = Doormot_User_Independent_Agent_Login_Form()
-
-        return render(request, 'doormot_reg_users/login.html', {'form':form, 'name':name})
+        return render(
+            request, 'doormot_reg_users/login.html', 
+            {"title":"Login", 'form':form, 'name':name, 'user_type':user_type}
+        )
 
     def post(self, request):
         email = request.POST.get('email')
@@ -46,30 +48,50 @@ class DoormotCustomLoginView(View):
 
         user_type = request.session.get('user_type')
 
-        # Authenticate user based on the provided credentials
-        user = authenticate(request, username=username, email=email, password=password, user_type=user_type)
+        # Failed login count identifier set to username and user_type
+        false_log_identifier = f"{user_type}_{username}" 
+        # Tries to retrieve Failed login count against identifier
+        # If none exists, sets default count to 5
+        false_log_count = request.session.get(f'false_log_count_{false_log_identifier}', 5)
 
-        print(user)
+        name = user_type
+        form = retrun_form_type(user_type)
+
+
+        false_log = 0
+
+
+        # Authenticate user based on the provided credentials
+        user = DoormotCustomUserBackend.authenticate(self, request=request, username=username, email=email, password=password, user_type=user_type, backend = 'doormot.doormot_reg_users.backends.DoormotCustomUserBackend')
 
         if user is not None:
             if user.is_active:
+                # Please do not tamper
+                user.backend = 'doormot.doormot_reg_users.backends.DoormotCustomUserBackend' # informs django which backend authentication to use
                 login(request, user)
-                return redirect('doormot-home') 
+                request.session['user'] = user.pk
+                request.session.get(f'false_log_count_{false_log_identifier}', 5) # Reset False Login Count to default after user logs in
+                return render (request, 'doormot_app/home.html', {"title":"Home", "user":user})
             else:
-                return redirect('doormot-reg-users-account-disabled')
+                return render (
+                    request, 'doormot_reg_users/account_disabled.html', {"title":"Account Disabled", "user":user})   
         else:
-            return redirect('doormot-reg-users-login-failed')
+            false_log_count -= 1
+            request.session[f'false_log_count_{false_log_identifier}'] = false_log_count
+
+            if false_log_count > 0:
+                message = f"Error: Login failed! You have only {false_log_count} attempts left!"
+                return render(request, 'doormot_reg_users/login.html', {"title":"Login", 'form':form, 'name':name, 'user_type':user_type, 'message':message, 'false_log_count':false_log_count},)
+            else:
+                return render (request, 'doormot_reg_users/account_disabled.html', {"title":"Account Disabled", "user":user}) 
+                        
 
 
-# class DoormotCustomLogoutView(View):
-#     def get(self, request):
-#         # Call the logout function to log out the current user
-#         logout(request)
-#         # Redirect to a page after logout (you can customize this)
-#         return redirect('doormot-home')
-
-
-
+class DoormotCustomLogoutView(View):
+    def get(self, request): 
+        logout(request) # Call the django built-in logout function to log out the current user
+       
+        return redirect('doormot-home')
 
 
 
@@ -256,16 +278,16 @@ def official_agent(request):
 
 # Independent Agent Registeration View
 def independent_agent(request):
-    form = Doormot_User_Independent_Agent_Form()
+    form = Doormot_User_Independent_Agent_Registration_Form()
 
     if request.method == 'POST':
-        form = Doormot_User_Independent_Agent_Form(request.POST)
+        form = Doormot_User_Independent_Agent_Registration_Form(request.POST)
 
         if form.is_valid():
             profile = form.save()
             return redirect('doormot-reg-users-login')
         else:
-            form = Doormot_User_Independent_Agent_Form()
+            form = Doormot_User_Independent_Agent_Registration_Form()
             
     return render(request, 'doormot_reg_users/independent_agent.html', {'title':'Independent-Agent-registration', 'form':form})
 

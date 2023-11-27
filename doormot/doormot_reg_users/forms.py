@@ -1,8 +1,9 @@
 from django import forms
+from django_countries.fields import CountryField
 from django.core.exceptions import ValidationError
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field, Div, HTML, Submit
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
 from .models import Doormot_User_Individual_Owner, Doormot_User_Private_Organization_Owner, Doormot_User_Individual_Buyer, Doormot_User_Private_Organization_Buyer, Doormot_User_Individual_Tenant, Doormot_User_Private_Organization_Tenant, Doormot_User_Official_Agent, Doormot_User_Independent_Agent
 
@@ -59,13 +60,11 @@ class Individual_owner_registeration_form(UserCreationForm):
         fields = ('username', 'password1', 'password2', 'email', 'phone_number')
 
 # Individual Owner Form Class
-class Individual_Owner_Login_Form(forms.Form):
+class Individual_Owner_Login_Form(AuthenticationForm):
     
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput())
 
-    helper = FormHelper()
-    helper.add_input(Submit('submit', 'login'))
 
 
 class Private_Organizations_Owner_Registeration_Form(UserCreationForm):
@@ -129,13 +128,11 @@ class Private_Organizations_Owner_Registeration_Form(UserCreationForm):
             user.save()
         return user
 
-class Private_Organizations_Owner_Login_Form(forms.Form):
+class Private_Organizations_Owner_Login_Form(AuthenticationForm):
     
-    email = forms.EmailField()
+    username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput())
 
-    helper = FormHelper()
-    helper.add_input(Submit('submit', 'login'))
 
 
 
@@ -204,13 +201,11 @@ class Individual_buyer_registeration_form(UserCreationForm):
         model = Doormot_User_Individual_Buyer
         fields = ('username', 'password1', 'password2', 'email', 'phone_number')
 
-class Individual_Buyer_Login_Form(forms.Form):
+class Individual_Buyer_Login_Form(AuthenticationForm):
     
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput())
 
-    helper = FormHelper()
-    helper.add_input(Submit('submit', 'login'))
 
 
 
@@ -276,14 +271,10 @@ class Private_Organizations_Buyer_Registeration_Form(UserCreationForm):
             user.save()
         return user
 
-class Private_Organizations_Buyer_Login_Form(forms.Form):
+class Private_Organizations_Buyer_Login_Form(AuthenticationForm):
     
-    email = forms.EmailField()
+    username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput())
-
-    helper = FormHelper()
-    helper.add_input(Submit('submit', 'login'))
-
 
 
 
@@ -356,14 +347,10 @@ class Individual_Tenant_Registration_Form(UserCreationForm):
             user.save()
         return user
 
-class Individual_Tenant_Login_Form(forms.Form):
+class Individual_Tenant_Login_Form(AuthenticationForm):
     
     username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput())
-
-    helper = FormHelper()
-    helper.add_input(Submit('submit', 'login'))
-
 
         
 # Private Organizations Agent Registeration Form:
@@ -428,13 +415,10 @@ class Private_Organization_Tenant_Registration_Form(UserCreationForm):
             user.save()
         return user
 
-class Private_Organization_Tenant_Login_Form(forms.Form):
+class Private_Organization_Tenant_Login_Form(AuthenticationForm):
     
-    email = forms.EmailField()
+    username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput())
-
-    helper = FormHelper()
-    helper.add_input(Submit('submit', 'login'))
 
 
 
@@ -506,13 +490,11 @@ class Official_Agent_Registration_Form(UserCreationForm):
         return user
 
 # Official Agent Login Form Class
-class Official_Agent_Login_Form(forms.Form):
+class Official_Agent_Login_Form(AuthenticationForm):
     
-    email = forms.EmailField()
+    username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput())
     
-    helper = FormHelper()
-    helper.add_input(Submit('submit', 'login'))
 
 
 
@@ -583,9 +565,6 @@ class Doormot_User_Independent_Agent_Registration_Form(UserCreationForm):
             user.save()
         return user
 
-class Doormot_User_Independent_Agent_Login_Form(forms.Form):
-    email = forms.EmailField()
+class Doormot_User_Independent_Agent_Login_Form(AuthenticationForm):
+    username = forms.CharField()
     password = forms.CharField(widget=forms.PasswordInput())
-
-    helper = FormHelper()
-    helper.add_input(Submit('submit', 'login'))

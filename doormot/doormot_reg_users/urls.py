@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import DoormotCustomLoginView #DoormotCustomLogoutView
+from .views import DoormotCustomLoginView, DoormotCustomLogoutView
 
 urlpatterns = [
             path('', views.register, name='doormot-reg-users-register'),
@@ -23,5 +23,5 @@ urlpatterns = [
             path('login/', DoormotCustomLoginView.as_view(), name='doormot-reg-users-login'),
             path('account_disabled/', views.disabled_account, name='doormot-reg-users-account-disabled'),
             path('login_failed/', views.login_failed, name='doormot-reg-users-login-failed'),
-            #path('logout/', CustomLogoutView.as_view(), name='custom_logout'),
+            path('logout/', DoormotCustomLogoutView.as_view(), name='doormot_custom_logout'),
         ]

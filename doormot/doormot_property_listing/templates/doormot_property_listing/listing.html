@@ -1,0 +1,66 @@
+{% extends  "doormot_property_listing/listing_base_temp.html" %}
+{% load static %}
+
+
+
+<!--Search Bar Section-->
+{% block serach-bar-section %}
+<form action="#" method="get" class="p-3">
+    <input type="text" name="#" placeholder="Search... price, state, LGAs" class="w-80 text-black mx-2 py-1 text-center focus:outline-none">
+    <button type="submit" class="bg-purple-700 hover:bg-orange-600 border border-orange-600 rounded-md text-white text-sm px-4 py-1">Search</button>
+</form>
+{% endblock serach-bar-section %}
+
+
+
+<!--Top Section-->
+{% block top-section %}
+<div class="px-4 block md:flex md:flex-wrap md:-mx-2 py-24">
+    <div class="w-full md:w-1/4  px-2 py-3">
+        <div class="border border-full shadow-md shadow-gray-600 overflow-hidden">
+            <div class="border border-full shadow-md shadow-gray-600 overflow-hidden ">
+                <div class="m-3"><img src="{% static 'doormot_app/carousel-1.jpg' %}"   alt="The house image" class="w-full h-full object-cover"></div>
+                <div class="font-serif m-3">
+                    <small>The only building</small>
+                    <small>You will love it</small>
+                    <small>Hello World!</small>
+                    <div class="">
+                        <button action="#" method="get">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
+                            </svg>  
+                        </button>  
+                    </div>
+                </div>
+            </div>
+        </div>   
+    </div>   
+</div>
+
+<div class="justify-center items-center flex">
+    <button type="submit" class="bg-purple-700 hover:bg-orange-600 border border-orange-600 rounded-md text-white text-sm px-4 py-1">Load More</button>
+</div>
+
+{% endblock top-section %}
+
+
+
+{% block free-section %}
+<div class="bg-black w-full grid grid-cols-2 py-10">
+    <div class="px-3 py-1 m-2 col-span-1">
+        <div class="text-5xl font-serif py-2 m-2 font-extrabold text-orange-600 text-center bg-black rounded-lg">
+            <h6>Discover Your<br>Perfect <span class="text-white">HOME</span></h6>
+        </div>
+    </div>
+    <div class="text-white px-3 py-2 m-2 col-span-1">
+        <p>Helping renters and buyers find the perfect property.</p>
+        <p>Explore and experience property rentals and sales in the most modern way</p>
+        <div class="text-3xl font-serif py-2 m-2 font-extrabold text-white text-start bg-black rounded-lg">
+            <h6>Buy, Sell, Rent and Lease With Ease!</h6>
+        </div>
+    </div>
+</div>
+{% endblock free-section %}
+
+
+
