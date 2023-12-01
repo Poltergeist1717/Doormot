@@ -5,7 +5,17 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Field, Div, HTML, Submit
 from django.contrib.auth.forms import UserCreationForm, AuthenticationForm
 from django.contrib.auth.models import User
-from .models import Doormot_User_Individual_Owner, Doormot_User_Private_Organization_Owner, Doormot_User_Individual_Buyer, Doormot_User_Private_Organization_Buyer, Doormot_User_Individual_Tenant, Doormot_User_Private_Organization_Tenant, Doormot_User_Official_Agent, Doormot_User_Independent_Agent
+from django.utils import timezone
+from .models import (
+    Doormot_User_Individual_Owner, 
+    Doormot_User_Private_Organization_Owner, 
+    Doormot_User_Individual_Buyer, 
+    Doormot_User_Private_Organization_Buyer,
+    Doormot_User_Individual_Tenant, 
+    Doormot_User_Private_Organization_Tenant, 
+    Doormot_User_Official_Agent, 
+    Doormot_User_Independent_Agent,
+    )
 
 
 
@@ -458,9 +468,18 @@ class Official_Agent_Registration_Form(UserCreationForm):
         required = True,
     )
 
+    date_of_birth = forms.DateField(
+        label = 'Date of Birth',
+        widget = forms.DateInput(attrs={'type':'date'}),
+        error_messages = {
+            'required': 'Please provide your date of birth!',
+        },
+        required = True,
+    )
+
     class Meta:
         model = Doormot_User_Official_Agent
-        fields = ('username', 'password1',  'password2', 'email', 'phone_number')
+        fields = ('username', 'password1',  'password2', 'email', 'phone_number', 'date_of_birth')
 
 
     def clean_email(self):
@@ -481,6 +500,19 @@ class Official_Agent_Registration_Form(UserCreationForm):
 
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError("Passwords do not match.")
+    
+    def clean_date_of_birth(self):
+        date_of_birth = self.cleaned_data.get('date_of_birth')
+        if date_of_birth:
+            current_year = timezone.now().year
+            birth_year = date_of_birth.year
+            age = current_year - birth_year
+            if age < 18:
+                raise forms.ValidationError("Agent cannot be below 18 years of age!")
+
+    def clean(self):
+        self.clean_date_of_birth()
+        return super().clean()
 
     def save(self, commit=True):
         user = super().save(commit=False)
@@ -534,10 +566,19 @@ class Doormot_User_Independent_Agent_Registration_Form(UserCreationForm):
         required = True,
     )
 
+    date_of_birth = forms.DateField(
+        label = 'Date of Birth',
+        widget = forms.DateInput(attrs={'type':'date'}),
+        error_messages = {
+            'required': 'Please provide your date of birth!',
+        },
+        required = True,
+    )
+
 
     class Meta:
         model = Doormot_User_Independent_Agent
-        fields = ('username', 'password1',  'password2', 'email', 'phone_number')
+        fields = ('username', 'password1',  'password2', 'email', 'phone_number', 'date_of_birth')
 
     def clean_email(self):
         email = self.cleaned_data['email']
@@ -557,6 +598,20 @@ class Doormot_User_Independent_Agent_Registration_Form(UserCreationForm):
 
         if password1 and password2 and password1 != password2:
             raise forms.ValidationError("Passwords do not match.")
+
+    def clean_date_of_birth(self):
+        date_of_birth = self.cleaned_data.get('date_of_birth')
+        if date_of_birth:
+            current_year = timezone.now().year
+            birth_year = date_of_birth.year
+            age = current_year - birth_year
+            if age < 18:
+                raise forms.ValidationError("Agent cannot be below 18 years of age!")
+
+    def clean(self):
+        self.clean_date_of_birth()
+        return super().clean()
+
 
     def save(self, commit=True):
         user = super().save(commit=False)

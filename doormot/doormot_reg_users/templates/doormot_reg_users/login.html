@@ -13,7 +13,7 @@
         
         <div class="p-2 mx-5 justify-center">
             {% if message %}
-                <div class=" text-red-700 border-red-700 border-2 text-center">
+                <div class="text-red-700 text-center">
                     <p>{{ message }}</p>
                     <p>Kindly check your username and/or password!</p>
                     <p>Please select the appropraite Account Type!</p>
@@ -43,7 +43,7 @@
         <div class="px-5 m-3 justify-center border border-full border-orange-600 rounded-lg shadow-md shadow-orange-600 bg-slate-200">   
             <div class="">
                 <form method="post" class="p-4 m-2" action="{% url 'doormot-reg-users-login' %}">
-                    <legend class="py-3 my-3 text-center bg-purple-950 text-white">{{ name }} Login</legend>
+                    <legend class="py-3 my-3 text-center bg-purple-950 text-white">{{ title }} Login</legend>
                     
                     {% csrf_token %}
                     <div>

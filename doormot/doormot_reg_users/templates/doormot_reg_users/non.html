@@ -1,6 +1,45 @@
 
 
 
+from django.test import TestCase
+from django.urls import reverse
+from django.contrib.auth import get_user_model
+
+class DoormotCustomLoginViewTest(TestCase):
+    def setUp(self):
+        self.login_url = reverse('login')  # Update with your actual URL name for the login view
+
+    def test_successful_login(self):
+        # Create a test user
+        user = get_user_model().objects.create_user(username='testuser', email='test@example.com', password='testpassword')
+
+        # Simulate a GET request to the login view
+        response = self.client.get(self.login_url)
+        self.assertEqual(response.status_code, 200)
+
+        # Simulate a POST request with valid login credentials
+        response = self.client.post(self.login_url, {'username': 'testuser', 'password': 'testpassword'})
+        
+        # Assuming you expect a successful login to redirect to the home page
+        self.assertRedirects(response, reverse('home'))  # Update with your actual URL name for the home page
+
+        # Check if the user is logged in
+        self.assertTrue('_auth_user_id' in self.client.session)
+
+    def test_unsuccessful_login(self):
+        # Simulate a GET request to the login view
+        response = self.client.get(self.login_url)
+        self.assertEqual(response.status_code, 200)
+
+        # Simulate a POST request with invalid login credentials
+        response = self.client.post(self.login_url, {'username': 'invaliduser', 'password': 'invalidpassword'})
+
+        # Assuming you expect an unsuccessful login to stay on the login page
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'Error: Login Failed!')
+
+        # Check if the user is not logged in
+        self.assertFalse('_auth_user_id' in self.client.session)
 
 
 class post_property(View):

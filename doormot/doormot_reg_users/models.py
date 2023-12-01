@@ -152,6 +152,8 @@ class Doormot_User_Individual_Owner(AbstractBaseUser, PermissionsMixin):
     )
 
     user_id = models.CharField(max_length=50, unique=True, default=None)
+    false_log_count = models.PositiveIntegerField(null=True, default=None)
+    currently_logged_in = models.BooleanField(null=True, default=False)
 
     to_let_listings = GenericRelation('doormot_property_listing.To_Let_Listed_Properties')
     for_sale_listings = GenericRelation('doormot_property_listing.For_Sale_Listed_Properties')
@@ -280,6 +282,8 @@ class Doormot_User_Private_Organization_Owner(AbstractBaseUser, PermissionsMixin
     for_sale_listings = GenericRelation('doormot_property_listing.For_Sale_Listed_Properties')
 
     user_id = models.CharField(max_length=50, unique=True, default=None)
+    false_log_count = models.PositiveIntegerField(null=True, default=None)
+    currently_logged_in = models.BooleanField(null=True, default=False)
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -440,6 +444,8 @@ class Doormot_User_Individual_Buyer(AbstractBaseUser, PermissionsMixin):
     )
 
     user_id = models.CharField(max_length=50, unique=True, default=None)
+    false_log_count = models.PositiveIntegerField(null=True, default=None)
+    currently_logged_in = models.BooleanField(null=True, default=False)
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -563,6 +569,8 @@ class Doormot_User_Private_Organization_Buyer(AbstractBaseUser, PermissionsMixin
     )
 
     user_id = models.CharField(max_length=50, unique=True, default=None)
+    false_log_count = models.PositiveIntegerField(null=True, default=None)
+    currently_logged_in = models.BooleanField(null=True, default=False)
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -719,6 +727,8 @@ class Doormot_User_Individual_Tenant(AbstractBaseUser, PermissionsMixin):
     )
 
     user_id = models.CharField(max_length=50, unique=True, default=None)
+    false_log_count = models.PositiveIntegerField(null=True, default=None)
+    currently_logged_in = models.BooleanField(null=True, default=False)
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -842,6 +852,8 @@ class Doormot_User_Private_Organization_Tenant(AbstractBaseUser, PermissionsMixi
     )
 
     user_id = models.CharField(max_length=50, unique=True, default=None)
+    false_log_count = models.PositiveIntegerField(null=True, default=None)
+    currently_logged_in = models.BooleanField(null=True, default=False)
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -988,8 +1000,6 @@ class Doormot_User_Official_Agent_Details(models.Model):
     local_government_of_residence = models.CharField(null=False, blank=False, max_length=40, default=None)
     current_home_address = models.CharField(null=False, blank=False, max_length=200, default=None)
 
-    date_of_birth = models.DateField(null=False, blank=False, default=timezone.now)
-
 
 class Doormot_User_Official_Agent(AbstractBaseUser, PermissionsMixin):
 
@@ -1013,6 +1023,9 @@ class Doormot_User_Official_Agent(AbstractBaseUser, PermissionsMixin):
     for_sale_listings = GenericRelation('doormot_property_listing.For_Sale_Listed_Properties')
     
     agent_id = models.CharField(max_length=50, unique=True, default=None)
+    false_log_count = models.PositiveIntegerField(null=True, default=None)
+    date_of_birth = models.DateField(null=False, blank=False, default=timezone.now)
+    currently_logged_in = models.BooleanField(null=True, default=False)
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -1235,8 +1248,6 @@ class Doormot_User_Independent_Agent_Details(models.Model):
     local_government_of_residence = models.CharField(null=True, blank=True, max_length=40, default=None)
     current_home_address = models.CharField(null=True, blank=True, max_length=200, default=None)
 
-    date_of_birth = models.DateField(null=True, blank=True, default=timezone.now)
-
 
 class Doormot_User_Independent_Agent(AbstractBaseUser):
 
@@ -1260,6 +1271,10 @@ class Doormot_User_Independent_Agent(AbstractBaseUser):
     for_sale_listings = GenericRelation('doormot_property_listing.For_Sale_Listed_Properties')
 
     agent_id = models.CharField(max_length=50, unique=True, default=None)
+    false_log_count = models.PositiveIntegerField(null=True, default=None)
+    date_of_birth = models.DateField(null=False, blank=False, default=timezone.now)
+    currently_logged_in = models.BooleanField(null=True, default=False)
+
 
     def save(self, *args, **kwargs):
         if not self.pk:

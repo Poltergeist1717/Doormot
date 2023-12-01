@@ -5,9 +5,6 @@
 
 
 {% block free-section %}
-<div class="bg-purple-950 hidden lg:flex lg:justify-center text-white">
-    <h6>REGISTER</h6>
-</div>
 
 <div class="flex justify-center items-center md:py-10">
 
@@ -18,13 +15,22 @@
     </div>
     
     <div class="px-5 mx-5 border border-full rounded-lg shadow-md shadow-gray-800  bg-slate-200 w-1/2">
-        <form method="post" class="p-4 m-2">
-            <legend class="py-3 my-3 text-center bg-purple-950 text-white"><small>Official-Agent-Registration</small></legend>
+        {% if message %}
+            <div class="error-message text-center text-red-700 p-4">
+                <p>{{ message }}</p>           
+            </div>
+        {% endif %}
+        {% for value in values %}
+            <div class="error-message text-center text-red-700 font-bold">
+                <p>{{ value }}</p>
+            </div>
+        {% endfor %}
+        <form method="post" class="p-4 m-2" action="{% url 'doormot-reg-users-official-agent' %}">
+            <legend class="py-3 my-3 text-center bg-purple-950 text-white">Official Agent Registration Form</legend>
             {% csrf_token %}
             <div>
                 {{ form | crispy }}
             </div>
-
             <div class="flex justify-center items-center py-5">
                 <button type="submit" class="bg-purple-700 hover:bg-orange-600 border border-orange-600 rounded-md text-white text-sm px-4 py-1">Register</button>
             </div>

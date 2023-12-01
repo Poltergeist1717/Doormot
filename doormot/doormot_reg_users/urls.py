@@ -5,6 +5,7 @@ from .views import DoormotCustomLoginView, DoormotCustomLogoutView
 urlpatterns = [
             path('', views.register, name='doormot-reg-users-register'),
 
+            # Registration forms URLS
             path('individual_owner/', views.individual_owner, name='doormot-reg-users-individual-owner'),
             path('private_organization_owner/', views.private_organization_owner, name='doormot-reg-users-private-organization-owner'),
 
@@ -20,6 +21,7 @@ urlpatterns = [
             path('logistics/', views.logistics, name='doormot-reg-users-logistics'),
             path('partner/', views.partner, name='doormot-reg-users-partner'),
 
+            # Login, Logout, Disable Account, Login_failed forms URLS
             path('login/', DoormotCustomLoginView.as_view(), name='doormot-reg-users-login'),
             path('account_disabled/', views.disabled_account, name='doormot-reg-users-account-disabled'),
             path('login_failed/', views.login_failed, name='doormot-reg-users-login-failed'),

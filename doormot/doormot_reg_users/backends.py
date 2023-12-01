@@ -15,9 +15,11 @@ class DoormotCustomUserBackend(ModelBackend):
                 user = Doormot_User_Individual_Owner.objects.get(username=username) if username else Doormot_User_Individual_Owner.objects.get(email=email)
                 if user.check_password(password):
                     return user
+                return None
             except ObjectDoesNotExist as e:
                 logger.exception('There was an error: %s', e)
                 return None
+                
            
 
         elif user_type == "Private_org_owner":
@@ -28,6 +30,7 @@ class DoormotCustomUserBackend(ModelBackend):
                 return None
             except ObjectDoesNotExist as e:
                 logger.exception('There was an error: %s', e)
+                return None
             
 
         
@@ -39,6 +42,7 @@ class DoormotCustomUserBackend(ModelBackend):
                 return None
             except ObjectDoesNotExist as e:
                 logger.exception('There was an error: %s', e)
+                return None
             
 
         elif user_type == "Private_org_buyer":
@@ -49,6 +53,7 @@ class DoormotCustomUserBackend(ModelBackend):
                 return None
             except ObjectDoesNotExist as e:
                 logger.exception('There was an error: %s', e)
+                return None
             
 
         
@@ -60,6 +65,7 @@ class DoormotCustomUserBackend(ModelBackend):
                 return None
             except ObjectDoesNotExist as e:
                 logger.exception('There was an error: %s', e)
+                return None
             
 
         elif user_type == "Private_org_tenant":
@@ -70,6 +76,7 @@ class DoormotCustomUserBackend(ModelBackend):
                 return None
             except ObjectDoesNotExist as e:
                 logger.exception('There was an error: %s', e)
+                return None
             
             
 
@@ -82,6 +89,7 @@ class DoormotCustomUserBackend(ModelBackend):
                 return None
             except ObjectDoesNotExist as e:
                 logger.exception('There was an error: %s', e)
+                return None
             
 
         elif user_type == "Independent_agent":
@@ -92,3 +100,4 @@ class DoormotCustomUserBackend(ModelBackend):
                 return None
             except ObjectDoesNotExist as e:
                 logger.exception('There was an error: %s', e)
+                return None

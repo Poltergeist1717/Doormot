@@ -50,9 +50,9 @@
         </div> 
           
           <!----nav-bar menu section-->
-          <div class="p-x m-2 block md:flex justify-between">
+          <div class="p-x m-2 block md:flex justify-between" id="content">
 
-            <div class="p-x m-2">
+            <div class="p-x m-2" id="navlist">
               <ul class="block sm:hidden md:flex space-x-5 text-white">
                 {% block navlist %}
                 <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-home' %}">HOME</a></li>
@@ -65,7 +65,7 @@
             </div>
     
             <!----log menu section-->
-            <div class="md:mx-11">
+            <div class="md:mx-11" id="log-list">
               <ul class="blcok sm:hidden md:flex space-x-4 text-white text-xs">
                 {% block navlist-right-header %}
                 {% if user.is_authenticated %}
@@ -81,7 +81,7 @@
           </div>
   
           <!----Harmburger Section-->
-          <div class="px-4 m-2 md:hidden" id="nav-bar-toogle">
+          <div class="px-4 m-2 md:hidden" id="hamburger" onclick="toggleNavBar()">
             <button class="text-white">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
