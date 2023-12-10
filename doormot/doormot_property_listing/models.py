@@ -25,6 +25,12 @@ class For_Sale_Listed_Properties(models.Model):
         ('O', 'Old'),
         ]
 
+    OWNED_BY_STATUS = [
+        ('I', 'Individual'),
+        ('C', 'Cooperate body'),
+        ('G', 'Government'),
+        ]
+
     PROPERTY_TYPES = [
         ('B', 'Bungalow'),
         ('D', 'Duplex'),
@@ -35,6 +41,16 @@ class For_Sale_Listed_Properties(models.Model):
         ('SC', 'Self-contained Apartment'),
         ('CB', 'Commercial Building'),
         ('RE', 'Residential Estate'),
+        ]
+
+    SUB_COMMERCIAL_PROPERTY_TYPES = [
+        ('SHP', 'Shopping Complex'),
+        ('OS', 'Office Space'),
+        ('SSHPU', 'Shop Units'),
+        ('SCHL', 'School Building'),
+        ('HSPTL', 'Hospital Building'),
+        ('PTRLSTN', 'Petrol Station'),
+        ('RSTRNT', 'Restaurant Building'),
         ]
 
 
@@ -48,9 +64,12 @@ class For_Sale_Listed_Properties(models.Model):
 
     property_id = models.CharField(max_length=50, unique=True, default=None)
 
+    owned_by = models.CharField(max_length=50, blank=False, null=False, default=None, choices=OWNED_BY_STATUS)
+
     asking_price = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False, default=None)
     property_status = models.CharField(max_length=50, blank=False, null=False, default=None, choices=PROPERTY_STATUS)
     property_type = models.CharField(max_length=50, blank=False, null=False, default=None, choices=PROPERTY_TYPES)
+    sub_commercial_property_type = models.CharField(max_length=50, blank=False, null=False, default=None, choices=SUB_COMMERCIAL_PROPERTY_TYPES)
     no_of_bedrooms = models.PositiveIntegerField(blank=False, null=False, default=None)
 
     no_of_livingrooms = models.PositiveIntegerField(blank=False, null=False, default=None)
@@ -70,7 +89,7 @@ class For_Sale_Listed_Properties(models.Model):
 
     date_time_of_sale = models.DateTimeField(null=True, default=None)
 
-    is_negotiable = models.BooleanField(default=True)
+    is_negotiable = models.BooleanField(default=False)
     is_sold = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
@@ -100,6 +119,12 @@ class To_Let_Listed_Properties(models.Model):
         ('O', 'Old'),
         ]
 
+    OWNED_BY_STATUS = [
+        ('I', 'Individual'),
+        ('C', 'Cooperate body'),
+        ('G', 'Government'),
+        ]
+
     PROPERTY_TYPES = [
         ('B', 'Bungalow'),
         ('D', 'Duplex'),
@@ -115,7 +140,11 @@ class To_Let_Listed_Properties(models.Model):
     SUB_COMMERCIAL_PROPERTY_TYPES = [
         ('SHP', 'Shopping Complex'),
         ('OS', 'Office Space'),
-        ('SSHPU', 'Single Shop Unit'),
+        ('SSHPU', 'Shop Units'),
+        ('SCHL', 'School Building'),
+        ('HSPTL', 'Hospital Building'),
+        ('PTRLSTN', 'Petrol Station'),
+        ('RSTRNT', 'Restaurant Building'),
         ]
     
     AVAILABLE = [
@@ -134,10 +163,12 @@ class To_Let_Listed_Properties(models.Model):
 
     property_id = models.CharField(max_length=50, unique=True, default=None)
 
+    owned_by = models.CharField(max_length=50, blank=False, null=False, default=None, choices=OWNED_BY_STATUS)
+
     rent_price = models.DecimalField(max_digits=10, decimal_places=2)
     property_status = models.CharField(max_length=50, choices=PROPERTY_STATUS)
     property_type = models.CharField(max_length=50, choices=PROPERTY_TYPES)
-    sub_commercial_property_type = models.CharField(max_length=50, choices=SUB_COMMERCIAL_PROPERTY_TYPES)
+    sub_commercial_property_type = models.CharField(max_length=50, blank=False, null=False, default=None, choices=SUB_COMMERCIAL_PROPERTY_TYPES)
     
     bathroom_is_available = models.CharField(max_length=50, blank=False, null=False, default=None, choices=AVAILABLE)
     toilet_is_available = models.CharField(max_length=50, blank=False, null=False, default=None, choices=AVAILABLE)
@@ -154,7 +185,7 @@ class To_Let_Listed_Properties(models.Model):
     date_time_of_upload = models.DateTimeField(auto_now_add=True)
 
     is_rented = models.BooleanField(default=False)
-    is_available_for_lease =  models.CharField(max_length=50, blank=False, null=False, default=None, choices=AVAILABLE)
+    is_available_for_lease =  models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):
         if not self.pk:

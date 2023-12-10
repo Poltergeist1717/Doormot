@@ -19,6 +19,11 @@ class To_Let_Listed_Properties_Form(forms.ModelForm):
             label = "Closest Landmark:",
             widget = forms.TextInput(),
         )
+        
+        is_available_for_lease = forms.BooleanField(
+            label = "Check the box if the property is available for lease.",
+            widget = forms.BooleanField(),
+        )
 
        
 
@@ -29,15 +34,17 @@ class To_Let_Listed_Properties_Form(forms.ModelForm):
             "description",
 
             "rent_price",
+            "is_available_for_lease",
             "property_status",
             "property_type",
-            "is_available_for_lease",
+            "sub_commercial_property_type",
 
             "bathroom_is_available",
             "toilet_is_available",
             "water_is_available",
             "good_power_supply",
             "owner_lives_in_property",
+            "owned_by",
 
             "address",
             "city",
@@ -56,6 +63,10 @@ class For_Sale_Listed_Properties_Form(forms.ModelForm):
             widget = forms.DateInput(attrs={'type':'date'}),
         )
 
+    is_negotiable = forms.BooleanField(
+        label = "Check the box if the property is negotiable.",
+    )
+
     class Meta:
         model = For_Sale_Listed_Properties
         fields = [
@@ -64,8 +75,10 @@ class For_Sale_Listed_Properties_Form(forms.ModelForm):
             "description",
 
             "asking_price",
+            "is_negotiable",
             "property_status",
             "property_type",
+            "sub_commercial_property_type",
 
            "no_of_livingrooms",
             "no_of_bedrooms",
@@ -75,6 +88,7 @@ class For_Sale_Listed_Properties_Form(forms.ModelForm):
             "size_of_property_by_square_footage",
             "size_of_property_by_plot",
             "year_developed",
+            "owned_by",
 
             "address",
             "city",

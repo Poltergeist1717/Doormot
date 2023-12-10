@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{% static 'doormot_app/generated.css' %}">
     <script src="{% static 'doormot_app/base_main.js' %}"></script>
+    <script src="{% static 'doormot_reg_users/main.js' %}"></script>
 
     
     {% if title %}
@@ -22,7 +23,7 @@
         <!--Background Image Container Scetion-->
         <div class="w-screen">
           <!--Top Section Block-->
-          <div class="relative w-screen h-auto">
+          <div>
             {% block top-section %}{% endblock top-section %}   
           </div>
         </div>
@@ -44,30 +45,22 @@
         </div> 
           
           <!----nav-bar menu section-->
-          <div class="p-x m-2 block md:flex justify-between">
+          <div class="p-x m-2 block md:flex justify-between" id="content-box">
 
             <div class="p-x m-2">
-              <ul class="block sm:hidden md:flex space-x-5 text-white">
+              <ul class="block sm:hidden md:flex space-x-5 text-white" id="navlist">
                 {% block navlist %}
-                {% if user.is_authenticated and user_type in allowed_user_type %}
-                <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-property-listing-upload-property' %}">PROPERTY</a></li>
                 <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-about' %}">ABOUT US</a></li>
                 <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-property-listing-general-listing' %}">LISTINGS</a></li>
                 <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-team' %}">TEAM</a></li>
-                <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-contact' %}">CONTACT</a></li>
-                {% else %}
-                <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-about' %}">ABOUT US</a></li>
-                <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-property-listing-general-listing' %}">LISTINGS</a></li>
-                <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-team' %}">TEAM</a></li>
-                <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-contact' %}">CONTACT</a></li>
-                {% endif %}  
+                <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-contact' %}">CONTACT</a></li>            
                 {% endblock navlist%}
               </ul>
             </div>
     
             <!----log menu section-->
             <div class="md:mx-11">
-              <ul class="blcok sm:hidden md:flex space-x-4 text-white text-xs">
+              <ul class="blcok sm:hidden md:flex space-x-4 text-white text-xs" id="log-nav-list">
                 {% block navlist-right-header %}
                 {% if user.is_authenticated %}
                 <li class="m-2 md:border md:border-full md:justify-center md:items-center md:border-orange-600 md:rounded-full px-2 py-1 md:bg-purple-700 md:hover:bg-orange-600"><a href=" {% url 'doormot_users_profiles_profile_views' username=user.username %}"><small>Profile</small></a></li>
@@ -82,7 +75,7 @@
           </div>
   
           <!----Harmburger Section-->
-          <div class="px-4 m-2 md:hidden" id="nav-bar-toogle">
+          <div class="px-4 m-2 md:hidden" id="hamburger" onclick="toggleNavBar()">
             <button class="text-white">
               <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />

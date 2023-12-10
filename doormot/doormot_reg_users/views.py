@@ -24,7 +24,8 @@ logger = logging.getLogger(__name__)
 
 
 # Type: Class
-# Name: Doormot Custom Login View 
+# Name: Doormot Custom Login View
+# Methods: get, post, authenticate_user 
 # Tasks: Handles user authentication
 #        Handles login logic for all user models
 #        Handles failed login attempts and prevents false log in
@@ -32,7 +33,8 @@ logger = logging.getLogger(__name__)
 #        Redirects non-registered users to register page
 #        Handles non_active user or disabled accounts
 #        Resets False log count field to default
-#        Prevents Double log in (A single account cannot log in, in different browsers at the same)
+#        Prevents simultaneous use of one account in two different places (A single account cannot log in, in different browsers at the same)
+
 class DoormotCustomLoginView(LoginView):
     def get(self, request):
         user_type = request.GET.get('user_type')
@@ -65,7 +67,7 @@ class DoormotCustomLoginView(LoginView):
                 handler_instance.set_field_value(field_name=log_count_field_name, desired_value=6)
                 false_log_count_field_value = 6 # Variable to hold the default value for false log count field for false log count field update
 
-            if currently_logged_in_value == True:
+            if currently_logged_in_value == True: # Check if user currently logged in and prevents the use of one account in two places.
                 message = "This account is currently logged in. If It wasn't you, reach out to customer care immediately!"
                 return render(request, 'doormot_reg_users/login.html', {"title": "Login", 'form': form, 'title': title, 'user_type': user_type, 'message':message})
            

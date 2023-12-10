@@ -8,6 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{% static 'doormot_app/generated.css' %}">
     <script src="{% static 'doormot_reg_users/main.js' %}"></script>
+    <script src="{% static 'doormot_app/base_main.js' %}"></script>
 
     
     {% if title %}
@@ -31,9 +32,10 @@
           
           <div class="p-5 mx-5 border border-full rounded-lg shadow-md shadow-gray-800  bg-slate-200 w-1/2">
             {% if message %}
-            <div class="text-center text-red-700 border border-red-700 font-extrabold">
-              <p>You have been redirected here because <br> {{ message }}</p>
+            <div class="text-center text-red-700 border border-red-700 text-sm font-bold p-4">
+              <p>{{ message }}</p>
               <p>Please register an account and then you can log in.</p>
+              <p class="py-2">If you have mistaken the account type <br> please return to the login page and use the appropraite account type.</p>
               <p>Thank you for your cooperation!</p>
             </div>
             {% endif %}
@@ -75,10 +77,10 @@
           </div>
   
           <!----nav-bar menu section-->
-          <div class="p-x m-2 block md:flex justify-between">
+          <div class="p-x m-2 flex justify-between" id="content-box">
 
             <div class="p-x m-2">
-              <ul class="block sm:hidden md:flex space-x-5 text-white">
+              <ul class="sm:text-sm md:text-lg flex space-x-5 text-white"  id="navlist">
 
                 {% block navlist %}
                 <!-- <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-reg-users-register' %}" class="active">REGISTER</a></li> -->
@@ -123,24 +125,16 @@
             </div>
     
             <!----log menu section-->
-            <div class="md:mx-11">
-              <ul class="blcok sm:hidden md:flex space-x-4 text-white text-xs">
+            <div class="mx-11">
+              <ul class="flex space-x-4 text-white text-xs">
                 {% block navlist-right-header %}
-                <li class="m-2 md:border md:border-full md:justify-center md:items-center md:border-orange-600 md:rounded-full px-2 py-1 md:bg-purple-700 md:hover:bg-orange-600"><a href="{% url 'doormot-reg-users-login' %}"><small>Login</small></a></li>
-                <li class="m-2 md:border md:border-full md:justify-center md:items-center md:border-orange-600 md:rounded-full px-2 py-1 md:bg-purple-700 md:hover:bg-orange-600"><a href="{% url 'doormot-home' %}"><small>Home</small></a></li>
+                <li class="m-2 border border-full justify-center items-center border-orange-600 rounded-full px-2 py-1 bg-purple-700 hover:bg-orange-600"><a href="{% url 'doormot-reg-users-login' %}"><small>Login</small></a></li>
+                <li class="m-2 border border-full justify-center items-center border-orange-600 rounded-full px-2 py-1 bg-purple-700 hover:bg-orange-600"><a href="{% url 'doormot-home' %}"><small>Home</small></a></li>
                 {% endblock navlist-right-header %}                
               </ul>
             </div>
           </div>
   
-          <!----Harmburger Section-->
-          <div class="px-4 m-2 md:hidden" id="nav-bar-toogle">
-            <button class="text-white">
-              <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
-              </svg>
-            </button>
-          </div>
         </div> 
     </div>
   
