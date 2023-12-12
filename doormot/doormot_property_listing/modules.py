@@ -75,18 +75,12 @@ class load_property_objects:
     @staticmethod
     def get_filtered_queryset(model, filter_conditions=None):
 
-        print(f"Model inside the module: {model}")
-        print(f"First print: Filter conditions inside the module: {filter_conditions}")
-
         queryset = model.objects.all()
 
         if filter_conditions:
-            print(f"Second Print: Filter conditions inside the module: {filter_conditions}")
             queryset = queryset.filter(**filter_conditions)
-            print(f"First Queryset inside the module: {queryset}")
 
             if queryset.exists():
-                print(f"Second Queryset inside the module if exist: {queryset}")
                 return queryset
         else:
             return None

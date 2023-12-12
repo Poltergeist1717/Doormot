@@ -67,6 +67,7 @@ function displayFilteredSearchBox2() {
 }
 
 
+
 function hideFilteredPropBox2() {
     var filter_treat = document.getElementById('filtered_property_box2');
 
@@ -90,8 +91,8 @@ document.getElementById('filter-icon').addEventListener('onclick', function(){
 
 // To Diplay Filter Search Box - 
 // To allow user interract with options to filter search  
-function displayPropertyDetailsOverlay() {
-    var property_details_overlay_box = document.getElementById('property-details-overlay');
+function displayPropertyDetailsOverlay(propertyID) {
+    var property_details_overlay_box = document.getElementById('property-details-overlay-'+propertyID);
 
     if (property_details_overlay_box.style.display === 'none' || property_details_overlay_box.style.display === '') {
         property_details_overlay_box.style.display = 'block';
@@ -155,9 +156,9 @@ upload_property_icon.addEventListener('onmouseover', displayUploadPropertyLabel)
 
 // To change Book Mark Icon - 
 // To show user has bookmarked 
-function changeBookMarkIcon() {
+function changeBookMarkIcon(propertyID) {
     
-    var book_mark_icon = document.getElementById('book-mark');
+    var book_mark_icon = document.getElementById('book-mark-'+propertyID);
 
     if (book_mark_icon.innerHTML === `<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
     <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />

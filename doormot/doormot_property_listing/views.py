@@ -8,6 +8,8 @@ from .models import To_Let_Listed_Properties, To_Let_Properties_Images, For_Sale
 from doormot_app.doormot_app_modules import return_user_object
 from .modules import load_property_objects
 from django.contrib.contenttypes.models import ContentType
+from django.core.files.uploadedfile import SimpleUploadedFile
+import imghdr
 import logging
 
 logger = logging.getLogger(__name__)
@@ -18,10 +20,13 @@ logger = logging.getLogger(__name__)
 
 def general_listing(request):
     model = To_Let_Listed_Properties
-    for_sale = None
+    product_image_model = To_Let_Properties_Images
 
     for_sale = request.GET.get('for_sale') 
     desired_no_of_proprties_to_load = request.GET.get('desired_no_of_proprties_to_load')
+
+    if for_sale == None:
+        for_sale = 'No'
 
     if for_sale == 'No':
         model = To_Let_Listed_Properties
@@ -33,6 +38,9 @@ def general_listing(request):
         price_tag = "Rent"
     if for_sale == 'Yes':
         price_tag = "Asking"
+
+    if for_sale == None:
+        price_tag = "Rent"
 
 
     user_type = request.session.get('user_type' )
@@ -47,7 +55,7 @@ def general_listing(request):
            return property_models
 
     property_models = return_property_model(batch_properties)
-    return render(request, 'doormot_property_listing/listing.html', {"title":"Listing", "user":user, 'user_type':user_type, 'allowed_user_type':allowed_user_type, 'property_models':property_models, "price_tag":price_tag,})
+    return render(request, 'doormot_property_listing/listing.html', {"title":"Listing", "user":user, 'user_type':user_type, 'allowed_user_type':allowed_user_type, 'property_models':property_models, "price_tag":price_tag, 'for_sale':for_sale})
 
 
 
@@ -113,9 +121,12 @@ class post_property(View):
 
             if form.is_valid():
                 try:
-                    image_list = self.validate_images(images=images)
+                    validate_images = self.validate_images(images=images)
+                    print(validate_images) 
                     returned_property_instance = self.create_property_instance(for_sale=for_sale, user=user, user_pk=user_pk, form=form)
-                    self.handle_image_creation(for_sale=for_sale, images=image_list, property_instance=returned_property_instance)
+                    for image_data in validate_images:
+                        print(image_data)
+                        self.handle_image_creation(for_sale=for_sale, images=image_data, property_instance=returned_property_instance)                   
                 except ValidationError as e:
                     message = f"There was Validation error(s): {e}. Please try again."
                     return render(request, 'doormot_property_listing/upload_property.html', {'user': user, 'user_type': user_type, 'allowed_user_type': allowed_user_type, 'form': form, 'name': name, 'message': message})
@@ -146,10 +157,10 @@ class post_property(View):
 
             if image.size > max_image_size:
                 raise ValidationError(f"Image size cannot exceed 1MB. {image} is too large!")
+                        
+            image_list.append(image)
 
-                image_list.append(image)
-
-        return image_list
+        return image_list          
 
 
     def create_property_instance(self, for_sale, user, user_pk, form):
@@ -269,17 +280,23 @@ class post_property(View):
     def handle_image_creation(self, for_sale, images, property_instance):
         self.for_sale = for_sale
         self.property_instance = property_instance
-        self.images = images        
-        if self.for_sale == "Yes":
-            property_image_instance = For_Sale_Properties_Images.objects.create(
-                connected_property = self.property_instance,
-                images = self.images
-                )
-        elif self.for_sale == "No":
-            property_image_instance = To_Let_Properties_Images.objects.create(
-                connected_property = self.property_instance,
-                images = self.images
-                )
+        self.images = images
+        try:        
+            if self.for_sale == "Yes":
+                property_image_instance = For_Sale_Properties_Images.objects.create(
+                    connected_property = self.property_instance,
+                    images = self.images
+                    )
+                print(f"For sale property image instance: {property_image_instance}")
+            elif self.for_sale == "No":
+                property_image_instance = To_Let_Properties_Images.objects.create(
+                    connected_property = self.property_instance,
+                    images = self.images
+                    )
+                print(f"To let property image instance: {property_image_instance}")
+        except Exception as e:
+            message = f"There was Exception error(s) during creating property image instance: {e}. Please start over again!"
+            logger.exception(message)
 
 
 
@@ -291,7 +308,7 @@ class post_property(View):
 
 # Type: Class
 # Name: Filter Property View
-# Methods: get_queryset
+# Methods: get_queryset, get_context_data
 # Tasks: Handles filtering property queryset
 #        Handles upload logic for property types
 #        Prevents users not allowed to upload property
@@ -309,22 +326,39 @@ class filtered_property_view(ListView):
         user_type = self.request.session.get('user_type' )
         user_pk = self.request.session.get('user')        
         user = return_user_object(user_pk, user_type)
+        for_sale = self.request.session.get('for_sale')
+        filter_conditions = self.request.session.get('filter_conditions')
 
         allowed_user_type = ['Individual_owner', 'Private_org_owner', 'Independent_agent', 'Official_agent']
                 
         context = super().get_context_data(**kwargs)
 
+        price_tag = "Rent"
+        if for_sale == 'No':
+            price_tag = "Rent"
+            filter_property_tag = "To Let"
+        if for_sale == 'Yes':
+            price_tag = "Asking"
+            filter_property_tag = "For Sale"
+
         context['title'] = 'Filtered Properties'
         context['user'] = user
         context['allowed_user_type'] = allowed_user_type
         context['user_type'] = user_type
-       
+        context['for_sale'] = for_sale
+        context['price_tag'] = price_tag
+        context['filter_conditions'] = filter_conditions
+        context['filter_property_tag'] = filter_property_tag
         return context
     
 
     def get_queryset(self):
 
         for_sale = self.request.GET.get('for_sale')
+        self.request.session['for_sale'] = for_sale
+
+        print(f"for_sale inside get queryset: {for_sale}")
+
         
         if for_sale == 'No':
             model = To_Let_Listed_Properties
@@ -340,10 +374,13 @@ class filtered_property_view(ListView):
         desired_local_governmet = self.request.GET.get('local_government')
         owned_by = self.request.GET.get('owned_by')
         property_type = self.request.GET.get('property_type')
-        property_status =self. request.GET.get('property_status')
+        property_ID = self.request.GET.get('property_id')
+        zip_code = self.request.GET.get('zip_code')
+        property_status = self.request.GET.get('property_status')
         desired_min_price = float(self.request.GET.get('min_price', 0))
         desired_max_price = float(self.request.GET.get('max_price', float('inf')))
             
+        print(property_ID)
         
         sub_commercial_property_type = ''
 
@@ -362,6 +399,10 @@ class filtered_property_view(ListView):
 
             if is_negotiable is not None:
                 filter_conditions['is_negotiable'] = is_negotiable
+
+            if property_ID:
+                filter_conditions['property_id'] = property_ID
+
 
 
 
@@ -391,6 +432,10 @@ class filtered_property_view(ListView):
 
             if is_available_for_lease is not None:
                 filter_conditions['is_available_for_lease'] = is_available_for_lease
+
+            if property_ID:
+                filter_conditions['property_id'] = property_ID
+
        
         
         if desired_town_city != '':
@@ -414,8 +459,43 @@ class filtered_property_view(ListView):
         if property_status != '':
             filter_conditions['property_status'] = property_status
 
+        if zip_code != '':
+            filter_conditions['zip_code'] = zip_code
+
         
-        print(model)
-        print(filter_conditions)
+        print (filter_conditions)
+        self.request.session['filter_conditions'] = filter_conditions 
 
         return load_property_objects.get_filtered_queryset(model=model, filter_conditions=filter_conditions)
+
+
+def property_more_details(request):
+    
+    for_sale = request.GET.get('for_sale')
+    print(for_sale)
+        
+    if for_sale == 'No':
+        model = To_Let_Listed_Properties
+        price_tag = "Rent"
+        filter_property_tag = "To Let"
+    elif for_sale == 'Yes':
+        model = For_Sale_Listed_Properties
+        price_tag = "Asking"
+        filter_property_tag = "For Sale"
+    else:
+        model = To_Let_Listed_Properties
+        price_tag = "Rent"
+        filter_property_tag = "To Let"
+
+    filter_conditions = {}
+    properprty_id = request.GET.get("property_model_id")
+
+    if properprty_id:
+        filter_conditions["id"] = properprty_id
+
+    property_model = load_property_objects.get_filtered_queryset(model=model, filter_conditions=filter_conditions)
+    print(property_model)
+    for properties in property_model:
+        print(properties.address)
+    
+    return render(request, 'doormot_property_listing/property_more_details.html', {'title':'Property Details', 'property_model':property_model, 'price_tag':price_tag})

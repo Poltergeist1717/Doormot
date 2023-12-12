@@ -2,6 +2,10 @@
 # CAUTION: Do not make any changes here except it is absolutely necessary and throughly thought through
 # This codes are highly delecate, a little bend can make them break - so, deal with care
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 from doormot_reg_users.models import (
     Doormot_User_Individual_Owner, 
     Doormot_User_Private_Organization_Owner, 
@@ -30,13 +34,16 @@ def return_user_object(user_pk, user_type):
     }
 
     if user_pk:
-        if user_type in user_type_map:
-            model_class = user_type_map[user_type]
-            user = model_class.objects.get(pk=user_pk)
-            return user
-        else:
-            raise ValueError("Invalid user_type")
-            return None
+        try:
+            if user_type in user_type_map:
+                model_class = user_type_map[user_type]
+                user = model_class.objects.get(pk=user_pk)
+                return user
+            else:
+                raise ValueError("Invalid user_type")
+                return None
+        except Exception as e:
+            logger.exception("There was an error: %s", e)
 
 
 
@@ -83,29 +90,36 @@ class Return_Model_Object_Fields_Handler:
             return None
 
     def return_user_object(self, **kwargs):
-        if kwargs:
-            # If additional kwargs are provided, use them
-            model_kwargs = kwargs
-        else:
-            # Otherwise, use the kwargs from the class instantiation
-            model_kwargs = self.model_kwargs
-
-        if self.user_type in self.user_type_map:
-            model_class = self.user_type_map[self.user_type]
-            if model_class.objects.filter(**model_kwargs).exists():
-                user = model_class.objects.get(**model_kwargs)
-                return user
+        try:
+            if kwargs:
+                # If additional kwargs are provided, use them
+                model_kwargs = kwargs
             else:
+                # Otherwise, use the kwargs from the class instantiation
+                model_kwargs = self.model_kwargs
+
+            if self.user_type in self.user_type_map:
+                model_class = self.user_type_map[self.user_type]
+                if model_class.objects.filter(**model_kwargs).exists():
+                    user = model_class.objects.get(**model_kwargs)
+                    return user
+                else:
+                    return None
+            else:
+                raise ValueError("Invalid user_type")
                 return None
-        else:
-            raise ValueError("Invalid user_type")
-            return None
+        except Exception as e:
+            logger.exception("There was an exception: %s", e)
 
     def set_field_value(self, field_name, desired_value):
-        self.field_name = field_name
-        user_object = self.return_user_object()
-        if user_object is not None:
-            user_object.__setattr__(self.field_name, desired_value)
-            user_object.save()
-        else:
-            pass
+        try:
+            self.field_name = field_name
+            user_object = self.return_user_object()
+            if user_object is not None:
+                user_object.__setattr__(self.field_name, desired_value)
+                user_object.save()
+            else:
+                raise ValueError("There was a value error! Couldn't set field value")
+        except Exception as e:
+            logger.exception("There was en exception in the set_field_value method: %s", e)
+            

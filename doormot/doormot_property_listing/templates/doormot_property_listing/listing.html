@@ -33,10 +33,8 @@
 
 <!--Top Section-->
 {% block top-section %}
-<div class="flex">
-    <div class="border-2 border-purple-950 bg-white w-full h-screen pt-24 hidden px-4 overflow-scroll" id="filter-choices-box">
-        
-        
+<div class="flex w-screen">
+    <div class="border-2 border-purple-950 bg-white w-screen h-screen pt-24 hidden px-4 overflow-scroll" id="filter-choices-box"> 
         <form class="p-4" method="get" action="{% url 'doormot-property-filter-upload-property' %}">
             {% csrf_token %}
             <div class="bg-orange-600 shadow-md shadow-slate-700 p-4">
@@ -69,6 +67,16 @@
                 <div class="flex gap-3 pb-2">
                     <label>Local Government:</label>
                     <input type="text" placeholder="Local Government" name="local_government" class="w-40 border">
+                </div>
+                <div>
+                    <label class="pr-2">Zip/Postal Code:</label>
+                    <input type="number" min="0" step="1" class="border w-40" name="zip_code">
+                </div>
+            </div>
+            <div class="p-2 m-2 border rounded-md shadow-sm shadow-orange-600">
+                <div class="flex gap-3 pb-2">
+                    <label>Property Serial Number:</label>
+                    <input type="text" placeholder="TLT-PPT/6015/HCDA/5590" name="property_id" class="w-60 border">
                 </div>
             </div>
 
@@ -187,17 +195,17 @@
 
 
         
-    <div class="block" id="property-box">
+    <div class="block w-screen" id="property-box">
         <div class="bg-orange-600 shadow-md shadow-slate-700 pt-16">
             <form id="typeForm" method="get" class="p-2 pt-2 justify-center items-center flex" action="{% url 'doormot-property-listing-general-listing' %}" id="listted_for_sale_form">
                 {% csrf_token %}
-                <div class="m-2 p-2 border rounded-md shadow-md shadow-white bg-purple-950">
-                    <div class="flex">
-                        <p class="text-white text-sm font-bold">No of proprties to load:</p>
-                        <input type="number" min="0" step="1" class="border m-2 sm:w-20 md:w-28 text-center" name="desired_no_of_proprties_to_load">
+                <div class="m-2 p-2 border rounded-md shadow-md shadow-white bg-purple-950 flex gap-2">
+                    <div class="text-center">
+                        <p class="text-white text-sm ">No of proprties to load</p>
+                        <input type="number" min="0" step="1" class="border m-2 sm:w-20 md:w-28 text-center h-8" name="desired_no_of_proprties_to_load">
                     </div>
-                    <div class="flex">
-                        <label class="text-center font-sans text-sm font-bold text-white">Type of <br>property:</label>     
+                    <div class="text-center">
+                        <p class="text-center font-sans text-sm  text-white">Type of property</p>     
                         <div class="flex justify-between border text-sm rounded-md shadow-sm shadow-orange-600 p-2 m-2 w-48 bg-white">
                             <div class="flex items-center justify-between">
                                 <button type="submit" id="for_sale" name="for_sale" value="No" class="bg-purple-700 hover:bg-orange-600 border border-orange-600 rounded-md text-white text-sm px-4 py-1">To Let</button> 
@@ -211,20 +219,39 @@
             </form>
         </div>  
 
-        {% if property_models %}
-        {% for property_model in property_models %}
-        <div class="px-4 flex flex-wrap mx-2 pt-6">
-            <div class="w-1/2 md:w-1/4 bg-white px-2 py-3 m-2">
-                <div class="text-center bg-purple-950 text-white w-full p-2" id="property-display-box" onmouseover="displayPropertyDetailsOverlay()">
+        {% if property_models %} 
+        <div class="px-4 flex flex-wrap pt-6 w-full">
+            {% for property_model in property_models %}
+            <div class="w-1/3 md:w-1/6 h-1/4 overflow-hidden bg-white px-2 py-3">
+                <div class="text-center bg-purple-950 text-white text-sm w-full h-12 overflow-hidden p-2" id="property-display-box-{{ property_model.id}}" onmouseover="displayPropertyDetailsOverlay('{{ property_model.id }}')">
                     <small>{{ property_model.title }}</small>
                 </div>
                 <div class="border border-full shadow-md shadow-gray-600 overflow-hidden relative">
                     <div class="border border-full shadow-md shadow-gray-600 overflow-hidden p-2">
-                        <div class="m-3">
-                            <img src="{% static 'doormot_app/carousel-1.jpg' %}"   alt="The house image" class="w-full h-full object-cover">
+                                       
+                        {% if for_sale == 'Yes' %}
+                        {% with first_image=property_model.for_sale_properties_images_set.first %}
+                        <div class="m-1 overflow-hidden h-48">
+                            <img src="{{ first_image.images.url }}" alt="No image uploaded for this product!" class="w-full h-48 rounded-sm object-cover">
                         </div>
+                        {% endwith %} 
+                        {% endif %}
+                        
+                        {% if for_sale == 'No' %}
+                        {% with first_image=property_model.to_let_properties_images_set.first %}
+                        <div class="m-1 overflow-hidden h-48">
+                            <img src="{{ first_image.images.url }}" alt="No image uploaded for this product" class="w-full h-48 rounded-sm object-cover">
+                        </div>
+                        {% endwith %} 
+                        {% endif %}
 
-                        <div class="hidden" id="property-details-overlay">
+                        {% if for_sale == None %}
+                        <div class="m-1 overflow-hidden h-48">
+                            <img src="{% static 'doormot_app/r3.png' %}" alt="No image uploaded for this product" class="w-full h-full object-cover">
+                        </div>                 
+                        {% endif %}
+                        
+                        <div class="hidden" id="property-details-overlay-{{ property_model.id }}">
                             <div class="font-serif flex gap-4 text-sm bg-purple-950 text-white p-2 absolute inset-0 opacity-80 w-full h-full">
                                 <div>
                                     <div>
@@ -237,24 +264,32 @@
                                         <div>
                                             <small>Owned By: {{ property_model.get_owned_by_display }}</small>
                                         </div>
-                                        <div>
-                                            <small> {{ price_tag }} Price: $ {{ property_model.rent_price }}</small>
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <div>
-                                            <small>Property ID: {{ property_model.property_id }}</small>
-                                        </div>
-                                        <div>
-                                            <small>Uploaded by: {{ property_model.uploaded_by }}</small>
-                                        </div>
-                                        <div>
-                                            <small>Owned By: {{ property_model.get_owned_by_display }}</small>
-                                        </div>
-                                        <div>
-                                            <small> {{ price_tag }} Price: $ {{ property_model.rent_price }}</small>
-                                        </div>
-                                    </div>   
+                                       
+                                       {% if for_sale == 'Yes' %}
+                                            <div>
+                                                <small> {{ price_tag }} Price: $ {{ property_model.asking_price }}</small>
+                                            </div>
+                                            <div>
+                                                <small>Is Negotiable: {{ property.is_negotiable }}</small>
+                                            </div>
+                                        {% endif %}
+                                        
+                                        {% if for_sale == 'No' %}
+                                            <div>
+                                                <small> {{ price_tag }} Price: $ {{ property_model.rent_price }}</small>
+                                            </div>
+                                            <div>
+                                                <small>Available For Lease: {{ property_model.is_available_for_lease }}</small>
+                                            </div>
+                                        {% endif %}
+
+                                        {% if for_sale == None %}
+                                            <div>
+                                                <small> {{ price_tag }} Price: $ {{ property_model.rent_price }}</small>
+                                            </div>
+                                        {% endif %}
+                                       
+                                    </div>    
                                 </div>
     
                                 <div>
@@ -262,10 +297,7 @@
                                         <small> State: {{ property_model.state }}</small>
                                     </div>
                                     <div>
-                                        <small> City: {{ property_model.city }}</small>
-                                    </div>
-                                    <div>
-                                        <small> Town: {{ property_model.town }}</small>
+                                        <small> City/Town: {{ property_model.city }}</small>
                                     </div>
                                     <div>
                                         <small> LGA: {{ property_model.local_government }}</small>
@@ -276,14 +308,11 @@
                                     <div>
                                         <small>Address: {{ property_model.address }}</small>
                                     </div>
-                                    <div>
-                                        <small>Available For Lease: {{ property_model.is_available_for_lease }}</small>
-                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="flex justify-center gap-4 p-2">
-                            <button action="#" method="get" id="book-mark" onclick="changeBookMarkIcon()" class="border border-gray-600 p-1">
+                            <button action="#" method="get" id="book-mark-{{ property_model.id }}" onclick="changeBookMarkIcon('{{ property_model.id }}')" class="border border-gray-600 p-1">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-6 h-6">
                                     <path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0111.186 0z" />
                                 </svg>  
@@ -296,44 +325,44 @@
                         </div>
 
                         <div class="flex justify-end mb-2">
-                            <a  href="{% url 'doormot-property-listing-general-listing' %}" class="flex text-xs hover:text-red-600 hover:font-bold text-black font-thin">
-                                <p>More details</p>
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M5 12h13M12 5l7 7-7 7"/>
-                                </svg>   
-                            </a>
+                            <form method="get" action="{% url 'doormot-property-more-details' %}" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                <input type="text" value="{{ property_model.id }}" name="property_model_id" class="hidden">
+                                <input type="text" value="{{ for_sale }}" name="for_sale" class="hidden">
+                                <button class="flex text-xs hover:text-red-600 hover:font-bold text-black font-thin" type="submit">
+                                    <p>More details</p>
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="15" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                        <path d="M5 12h13M12 5l7 7-7 7"/>
+                                    </svg>   
+                                </button>
+                            </form>
                         </div>  
                                             
                         <div class="bg-orange-600 h-2">                           
                         </div>
                         
                     </div>
-                </div>   
+                </div>
+                  
             </div>
-             
+            {% endfor %}  
         </div>
         <div class="justify-center items-center flex">
             <button type="submit" class="bg-purple-700 hover:bg-orange-600 border border-orange-600 rounded-md text-white text-sm px-4 py-1">Load More</button>
-        </div>
-        {% endfor %} <!-- endfor general property_models -->
+        </div> 
         {% else %}
-        <div class="bg-purple-950 text-white font-extrabold text-9xl text-center pt-6 w-full">
-            <h6>There is no property that match your filter conditions!</h6>
-        </div>
-        {% endif %} <!-- endif for general property_models -->
-       
-        
-        
-
-
-
-
-        
-        
+        <div class="bg-white text-red-600 font-extrabold text-xl text-center p-6 mt-6">
+            <h6>There is no property available to display!</h6>
+        </div> 
+        {% endif %} <!-- endif for filtered_property_models -->       
     </div>
-
+     
 </div>
+
+
+
 {% endblock top-section %}
+
 
 
 

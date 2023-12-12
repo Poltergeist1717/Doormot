@@ -509,6 +509,8 @@ class Official_Agent_Registration_Form(UserCreationForm):
             age = current_year - birth_year
             if age < 18:
                 raise forms.ValidationError("Agent cannot be below 18 years of age!")
+            else:
+                return date_of_birth
 
     def clean(self):
         self.clean_date_of_birth()
@@ -517,6 +519,7 @@ class Official_Agent_Registration_Form(UserCreationForm):
     def save(self, commit=True):
         user = super().save(commit=False)
         user.set_password(self.cleaned_data["password1"])
+        
         if commit:
             user.save()
         return user
@@ -607,6 +610,8 @@ class Doormot_User_Independent_Agent_Registration_Form(UserCreationForm):
             age = current_year - birth_year
             if age < 18:
                 raise forms.ValidationError("Agent cannot be below 18 years of age!")
+            else:
+                return date_of_birth
 
     def clean(self):
         self.clean_date_of_birth()

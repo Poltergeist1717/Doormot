@@ -1,0 +1,186 @@
+{% extends  "doormot_property_listing/listing_base_temp.html" %}
+{% load static %}
+
+
+{% block top-section %}
+{% for property in property_model %}
+{% if property %}
+
+<div class="h-1/4 w-screen overflow-hidden bg-orange-600">
+    {% with first_image=property.to_let_properties_images_set.first %}
+        <div class="m-1 overflow-hidden h-48">
+            <img src="{{ first_image.images.url }}" alt="No image uploaded for this product" class="w-full h-48 object-cover">
+        </div>
+    {% endwith %}         
+</div>
+
+    
+    <div class="">
+        <div class="border-2 bg-white w-screen font-serif px-2 py-3 shadow-sm rounded-tr-2xl rounded-bl-2xl shadow-slate-800">
+            <div class="font-serif gap-4 text-sm p-2 flex flex-wrap">
+                <div class="w-1/2 flex">
+                    <div class="font-serif px-2 py-3 shadow-sm border rounded-tr-2xl rounded-bl-2xl shadow-slate-800">
+                        <div>
+                            <h1> description: {{ property.description }}</h1>
+                        </div>
+                        <div>
+                            <h1> closest_landmark: {{ property.closest_landmark }}</h1>
+                        </div>
+                        <div>
+                            <h1>Property ID: {{ property.property_id }}</h1>
+                        </div>
+                        <div>
+                            <h1>Uploaded by: {{ property.uploaded_by }}</h1>
+                        </div>
+                        <div>
+                            <h1>Owned By: {{ property.get_owned_by_display }}</h1>
+                        </div>
+                       
+                       {% if for_sale == 'Yes' %}
+                            <div>
+                                <h1> {{ price_tag }} Price: $ {{ property.asking_price }}</h1>
+                            </div>
+                            <div>
+                                <h1>Is Negotiable: {{ property.is_negotiable }}</h1>
+                            </div>
+                        {% endif %}
+                        
+                        
+
+                        {% if for_sale == 'No' %}
+                            <div>
+                                <h1> {{ price_tag }} Price: $ {{ property.rent_price }}</h1>
+                            </div>
+                            <div>
+                                <h1>Available For Lease: {{ property.is_available_for_lease }}</h1>
+                            </div>                           
+                        {% endif %}
+
+
+                        {% if for_sale == None %}
+                            <div>
+                                <h1> {{ price_tag }} Price: $ {{ property.rent_price }}</h1>
+                            </div>
+                        {% endif %}
+                    </div>    
+               
+
+                    <div class="font-serif px-2 py-3 shadow-sm border rounded-tr-2xl rounded-bl-2xl shadow-slate-800">
+                        <div>
+                            <h1> State: {{ property.state }}</h1>
+                        </div>
+                        <div>
+                            <h1> City/Town: {{ property.city }}</h1>
+                        </div>
+                        <div>
+                            <h1> LGA: {{ property.local_government }}</h1>
+                        </div>
+                        <div>
+                            <h1> Zip-Code: {{ property.zip_code }}</h1>
+                        </div>
+                        <div>
+                            <h1>Address: {{ property.address }}</h1>
+                        </div>                    
+                    </div>
+
+                    <div class="font-serif px-2 py-3 shadow-sm border rounded-tr-2xl rounded-bl-2xl shadow-slate-800">
+                        <div>
+                            <h1> no_of_livingrooms: {{ property.no_of_livingrooms }}</h1>
+                        </div>
+                        <div>
+                            <h1> no_of_bathrooms: {{ property.no_of_bathrooms }}</h1>
+                        </div>
+                        <div>
+                            <h1> no_of_kitchens: {{ property.no_of_kitchens }}</h1>
+                        </div>
+                        <div>
+                            <h1> size_of_property_by_square_footage: {{ property.size_of_property_by_square_footage }}</h1>
+                        </div>
+                        <div>
+                            <h1> size_of_property_by_plot: {{ property.size_of_property_by_plot }}</h1>
+                        </div>
+                        <div>
+                            <h1>date_time_of_upload: {{ property.date_time_of_upload }}</h1>
+                        </div>                    
+                    </div>
+
+                    <div class="font-serif px-2 py-3 shadow-sm border rounded-tr-2xl rounded-bl-2xl shadow-slate-800">
+                        <div>
+                            <h1> description: {{ property.description }}</h1>
+                        </div>
+                        <div>
+                            <h1> closest_landmark: {{ property.closest_landmark }}</h1>
+                        </div>
+                        <div>
+                            <h1> title: {{ property.title }}</h1>
+                        </div>
+                        <div>
+                            <h1> size_of_property_by_square_footage: {{ property.size_of_property_by_square_footage }}</h1>
+                        </div>
+                        <div>
+                            <h1> size_of_property_by_plot: {{ property.size_of_property_by_plot }}</h1>
+                        </div>
+                        <div>
+                            <h1>date_time_of_upload: {{ property.date_time_of_upload }}</h1>
+                        </div>                    
+                    </div>
+                </div>
+            </div>
+        </div>              
+    </div>
+    {% endif %}
+    {% endfor %}
+{% endblock top-section %}
+
+
+
+
+
+
+
+{% block free-section %}
+{% for property in property_model %}
+{% if property %}
+<div>
+    {% if for_sale == 'Yes' %}
+    {% for image in property.to_let_properties_images.all %}    
+    <div class="m-1 overflow-hidden h-48">
+        <img src="{{ image.images.url }}" alt="No image uploaded for this product" class="w-full h-48 rounded-sm object-cover">
+    </div>
+    {% endfor %}
+    {% endif %}
+                    
+    {% if for_sale == 'No' %}
+    {% with all_images=property.to_let_properties_images_set.all %}
+    {% for image in all_images %}
+    <div class="m-1 overflow-hidden h-48">
+        <img src="{{ image.images.url }}" alt="No image uploaded for this product" class="w-full h-48 rounded-sm object-cover">
+    </div>
+    {% endfor %}
+    {% endwith %} 
+    {% endif %}
+
+    {% if for_sale == None %}
+    <div class="m-1 overflow-hidden h-48">
+        <img src="{% static 'doormot_app/r3.png' %}" alt="No image uploaded for this product" class="w-full h-full object-cover">
+    </div>                 
+    {% endif %}
+</div>
+{% endif %}
+{% endfor %}
+
+<div class="bg-black w-full grid grid-cols-2 py-10">
+    <div class="px-3 py-1 m-2 col-span-1">
+        <div class="text-5xl font-serif py-2 m-2 font-extrabold text-orange-600 text-center bg-black rounded-lg">
+            <h6>Discover Your<br>Perfect <span class="text-white">HOME</span></h6>
+        </div>
+    </div>
+    <div class="text-white px-3 py-2 m-2 col-span-1">
+        <p>Helping renters and buyers find the perfect property.</p>
+        <p>Explore and experience property rentals and sales in the most modern way</p>
+        <div class="text-3xl font-serif py-2 m-2 font-extrabold text-white text-start bg-black rounded-lg">
+            <h6>Buy, Sell, Rent and Lease With Ease!</h6>
+        </div>
+    </div>
+</div>
+{% endblock free-section %}
