@@ -5,6 +5,8 @@ from django.core.exceptions import ValidationError
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from doormot_reg_users.doormot_reg_modules import rand
+from django.contrib.contenttypes.fields import GenericRelation
+
 
 
 
@@ -57,6 +59,13 @@ class For_Sale_Listed_Properties(models.Model):
     uploaded_by = GenericForeignKey('uploaded_by_content_type', 'uploaded_by_object_id')
     uploaded_by_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     uploaded_by_object_id = models.PositiveIntegerField()
+
+    uploader_user_type = models.CharField(max_length=50, blank=False, null=False, default=None)
+    
+    reverse_relation_individual_owner = GenericRelation('doormot_reg_users.Doormot_User_Individual_Owner')
+    reverse_relation_private_organization_owner = GenericRelation('doormot_reg_users.Doormot_User_Private_Organization_Owner') 
+    reverse_relation_official_agent = GenericRelation('doormot_reg_users.Doormot_User_Official_Agent')
+    reverse_relation_independent_agent = GenericRelation('doormot_reg_users.Doormot_User_Independent_Agent')
 
     title = models.CharField(max_length=100)
     closest_landmark = models.CharField(max_length=100, blank=False, null=False, default=None)
@@ -156,6 +165,14 @@ class To_Let_Listed_Properties(models.Model):
     uploaded_by = GenericForeignKey('uploaded_by_content_type', 'uploaded_by_object_id')
     uploaded_by_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     uploaded_by_object_id = models.PositiveIntegerField()
+
+    uploader_user_type = models.CharField(max_length=50, blank=False, null=False, default=None)
+
+
+    reverse_relation_individual_owner = GenericRelation('doormot_reg_users.Doormot_User_Individual_Owner')
+    reverse_relation_private_organization_owner = GenericRelation('doormot_reg_users.Doormot_User_Private_Organization_Owner') 
+    reverse_relation_official_agent = GenericRelation('doormot_reg_users.Doormot_User_Official_Agent')
+    reverse_relation_independent_agent = GenericRelation('doormot_reg_users.Doormot_User_Independent_Agent')
     
     title = models.CharField(max_length=100)
     closest_landmark = models.CharField(max_length=50, blank=False, null=False, default=None)

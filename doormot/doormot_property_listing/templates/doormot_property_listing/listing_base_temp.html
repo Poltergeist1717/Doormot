@@ -51,7 +51,7 @@
               <ul class="block sm:hidden md:flex space-x-5 text-white" id="navlist">
                 {% block navlist %}
                 <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-about' %}">ABOUT US</a></li>
-                <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-property-listing-general-listing' %}">LISTINGS</a></li>
+                <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-property-listing-general-listing' %}" class="flex">LISTINGS</a></li>
                 <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-team' %}">TEAM</a></li>
                 <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-contact' %}">CONTACT</a></li>            
                 {% endblock navlist%}

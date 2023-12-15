@@ -9,8 +9,16 @@ from doormot_app.doormot_app_modules import return_user_object
 from .modules import load_property_objects
 from django.contrib.contenttypes.models import ContentType
 from django.core.files.uploadedfile import SimpleUploadedFile
-import imghdr
+from django.db.models import Q
+from django.shortcuts import get_object_or_404
+from django.http import Http404
 import logging
+from doormot_reg_users.models import (
+    Doormot_User_Individual_Owner, 
+    Doormot_User_Private_Organization_Owner, 
+    Doormot_User_Official_Agent, 
+    Doormot_User_Independent_Agent
+    )
 
 logger = logging.getLogger(__name__)
 
@@ -55,7 +63,16 @@ def general_listing(request):
            return property_models
 
     property_models = return_property_model(batch_properties)
-    return render(request, 'doormot_property_listing/listing.html', {"title":"Listing", "user":user, 'user_type':user_type, 'allowed_user_type':allowed_user_type, 'property_models':property_models, "price_tag":price_tag, 'for_sale':for_sale})
+    context = {
+        "title":"Listing", 
+        "user":user, 
+        'user_type':user_type, 
+        'allowed_user_type':allowed_user_type, 
+        'property_models':property_models, 
+        "price_tag":price_tag, 
+        'for_sale':for_sale,
+        }
+    return render(request, 'doormot_property_listing/listing.html', context)
 
 
 
@@ -122,10 +139,8 @@ class post_property(View):
             if form.is_valid():
                 try:
                     validate_images = self.validate_images(images=images)
-                    print(validate_images) 
-                    returned_property_instance = self.create_property_instance(for_sale=for_sale, user=user, user_pk=user_pk, form=form)
+                    returned_property_instance = self.create_property_instance(for_sale=for_sale, user=user, user_pk=user_pk, user_type=user_type, form=form)
                     for image_data in validate_images:
-                        print(image_data)
                         self.handle_image_creation(for_sale=for_sale, images=image_data, property_instance=returned_property_instance)                   
                 except ValidationError as e:
                     message = f"There was Validation error(s): {e}. Please try again."
@@ -163,7 +178,7 @@ class post_property(View):
         return image_list          
 
 
-    def create_property_instance(self, for_sale, user, user_pk, form):
+    def create_property_instance(self, for_sale, user, user_pk, user_type, form):
         try:
             # Extract form data coomon to both fomrms
             title = form.cleaned_data.get('title')
@@ -212,6 +227,7 @@ class post_property(View):
                 for_sale_property_instance = For_Sale_Listed_Properties.objects.create(
                     uploaded_by_content_type=ContentType.objects.get_for_model(user),
                     uploaded_by_object_id=user_pk,
+                    uploader_user_type=user_type,
 
                     title=title,
                     closest_landmark=closest_landmark,
@@ -246,6 +262,7 @@ class post_property(View):
                 to_let_property_instance = To_Let_Listed_Properties.objects.create(
                     uploaded_by_content_type=ContentType.objects.get_for_model(user),
                     uploaded_by_object_id=user_pk,
+                    uploader_user_type=user_type,
 
                     title=title,
                     closest_landmark=closest_landmark,
@@ -287,13 +304,13 @@ class post_property(View):
                     connected_property = self.property_instance,
                     images = self.images
                     )
-                print(f"For sale property image instance: {property_image_instance}")
+
             elif self.for_sale == "No":
                 property_image_instance = To_Let_Properties_Images.objects.create(
                     connected_property = self.property_instance,
                     images = self.images
                     )
-                print(f"To let property image instance: {property_image_instance}")
+
         except Exception as e:
             message = f"There was Exception error(s) during creating property image instance: {e}. Please start over again!"
             logger.exception(message)
@@ -340,6 +357,9 @@ class filtered_property_view(ListView):
         if for_sale == 'Yes':
             price_tag = "Asking"
             filter_property_tag = "For Sale"
+        else:
+            price_tag = "Rent"
+            filter_property_tag = "To Let"
 
         context['title'] = 'Filtered Properties'
         context['user'] = user
@@ -379,8 +399,6 @@ class filtered_property_view(ListView):
         property_status = self.request.GET.get('property_status')
         desired_min_price = float(self.request.GET.get('min_price', 0))
         desired_max_price = float(self.request.GET.get('max_price', float('inf')))
-            
-        print(property_ID)
         
         sub_commercial_property_type = ''
 
@@ -402,9 +420,6 @@ class filtered_property_view(ListView):
 
             if property_ID:
                 filter_conditions['property_id'] = property_ID
-
-
-
 
         if for_sale == "No":
             owner_lives_in_property = self.request.GET.get('owner_lives_in_property')
@@ -462,22 +477,138 @@ class filtered_property_view(ListView):
         if zip_code != '':
             filter_conditions['zip_code'] = zip_code
 
-        
-        print (filter_conditions)
         self.request.session['filter_conditions'] = filter_conditions 
 
         return load_property_objects.get_filtered_queryset(model=model, filter_conditions=filter_conditions)
 
 
+
+
+
+# Type: Class
+# Name: Filter Property By Username View
+# Methods: get_queryset, get_context_data
+# Tasks: Handles filtering property queryset
+#        Handles upload logic for property types
+#        Prevents users not allowed to upload property
+#        Reverse changes made to database if any of the transactions fails (@transaction.atomic) 
+#        Handles creating property instnance for both types - For Sale and To Let
+#        Handles creating property image instance for both types - For Sale and To Let
+#        Resets False log count field to default
+class filter_property_by_username(ListView):
+    
+    template_name = 'doormot_property_listing/filtered_properties.html'   
+    context_object_name = 'filtered_property_models'   
+
+    def get_context_data(self, **kwargs):
+        user_type = self.request.session.get('user_type' )
+        user_pk = self.request.session.get('user')        
+        user = return_user_object(user_pk, user_type)
+        for_sale = 'No'
+        for_sale = self.request.session.get('for_sale')
+        
+        allowed_user_type = ['Individual_owner', 'Private_org_owner', 'Independent_agent', 'Official_agent']
+                
+        context = super().get_context_data(**kwargs)
+
+        filter_property_tag = None
+
+        price_tag = "Rent"
+        if for_sale == 'No':
+            price_tag = "Rent"
+            filter_property_tag = "To Let"
+        elif for_sale == 'Yes':
+            price_tag = "Asking"
+            filter_property_tag = "For Sale"
+        else:
+            price_tag = "Rent"
+            filter_property_tag = "To Let"
+
+        if filter_property_tag == None:
+            filter_property_tag = "To Let"
+
+
+        context['title'] = 'Filtered Properties'
+        context['user'] = user
+        context['allowed_user_type'] = allowed_user_type
+        context['user_type'] = user_type
+        context['for_sale'] = for_sale
+        context['price_tag'] = price_tag
+        context['filter_property_tag'] = filter_property_tag
+        return context
+    
+    def get_queryset(self):
+        for_sale = self.request.GET.get('for_sale')
+        self.request.session['for_sale'] = for_sale
+        username_query = self.request.GET.get('uploaded_by')
+        user_type = self.request.GET.get('user_type')
+
+        if for_sale == 'No':
+            model = To_Let_Listed_Properties
+        elif for_sale == 'Yes':
+            model = For_Sale_Listed_Properties
+        else:
+            model = To_Let_Listed_Properties
+
+        try:
+            user_models_mapping = {
+                'Individual_owner':Doormot_User_Individual_Owner, 
+                'Private_org_owner':Doormot_User_Private_Organization_Owner, 
+                'Official_agent':Doormot_User_Official_Agent, 
+                'Independent_agent':Doormot_User_Independent_Agent,
+            }
+
+            user_id = None
+
+            user_model = user_models_mapping.get(user_type)
+
+            user = get_object_or_404(user_model, username=username_query)
+            user_id = user.pk
+            
+            if user_id is not None:
+
+                queryset = model.objects.filter(
+                    uploaded_by_content_type=ContentType.objects.get_for_model(user_model),
+                    uploaded_by_object_id=user_id
+                )
+
+                return queryset
+            else:   
+                raise Http404("User not found for any model")                
+        except Exception as e:
+            logger.exception("There was an error: %s", e)
+
+
+
+
+# Type: Function
+# Name: Property More Details
+# Methods: get_queryset, get_context_data
+# Tasks: Handles filtering property queryset
+#        Handles upload logic for property types
+#        Prevents users not allowed to upload property
+#        Reverse changes made to database if any of the transactions fails (@transaction.atomic) 
+#        Handles creating property instnance for both types - For Sale and To Let
+#        Handles creating property image instance for both types - For Sale and To Let
+#        Resets False log count field to default
 def property_more_details(request):
     
     for_sale = request.GET.get('for_sale')
-    print(for_sale)
+    request.session['for_sale'] = for_sale
+    desired_town_city = request.GET.get('city')
+    desired_state = request.GET.get('state')
+    property_type = request.GET.get('property_type')
+    property_status = request.GET.get('property_status')
+    desired_max_price = request.GET.get('max_price')
+
+    template = "property_more_details"
+
         
     if for_sale == 'No':
         model = To_Let_Listed_Properties
         price_tag = "Rent"
         filter_property_tag = "To Let"
+        
     elif for_sale == 'Yes':
         model = For_Sale_Listed_Properties
         price_tag = "Asking"
@@ -488,14 +619,69 @@ def property_more_details(request):
         filter_property_tag = "To Let"
 
     filter_conditions = {}
+    advertisied_property_models_filter_conditions = {}
+
     properprty_id = request.GET.get("property_model_id")
 
     if properprty_id:
         filter_conditions["id"] = properprty_id
 
     property_model = load_property_objects.get_filtered_queryset(model=model, filter_conditions=filter_conditions)
-    print(property_model)
-    for properties in property_model:
-        print(properties.address)
+
+
+    if desired_town_city:
+        advertisied_property_models_filter_conditions['city'] = desired_town_city
+
+    if desired_state:
+        advertisied_property_models_filter_conditions['state'] = desired_state
+
+    if property_type:
+        advertisied_property_models_filter_conditions['property_type'] = property_type
+
+    if property_status:
+        advertisied_property_models_filter_conditions['property_status'] = property_status
     
-    return render(request, 'doormot_property_listing/property_more_details.html', {'title':'Property Details', 'property_model':property_model, 'price_tag':price_tag})
+    if for_sale == 'No':
+        if desired_max_price:
+            advertisied_property_models_filter_conditions['rent_price__lte'] = desired_max_price
+
+    if for_sale == 'Yes':
+        if desired_max_price:
+            advertisied_property_models_filter_conditions['asking_price__lte'] = desired_max_price
+
+
+    advertisied_filtered_property_models = load_property_objects.get_filtered_queryset(model=model, filter_conditions=advertisied_property_models_filter_conditions)
+    
+    print(f"Advertisied filtered property models: {advertisied_filtered_property_models}")
+    
+    def return_multiple_images(property_model):
+        for properties in property_model:
+            print(properties.address)
+
+            if for_sale == 'No':
+                all_images = properties.to_let_properties_images_set.all()
+                first_image = properties.to_let_properties_images_set.first()
+                
+            elif for_sale == 'Yes':
+                all_images = properties.for_sale_properties_images_set.all()
+                first_image = properties.for_sale_properties_images_set.first()
+                
+            else:
+                all_images = properties.to_let_properties_images_set.all()
+                first_image = properties.to_let_properties_images_set.first()
+            
+            return all_images, first_image
+
+    all_images, first_image = return_multiple_images(property_model)
+
+    context = {
+        'title':'Property Details', 
+        'property_model':property_model, 
+        'price_tag':price_tag, 
+        'all_images':all_images, 
+        'first_image':first_image, 
+        'template':template,
+        'advertisied_filtered_property_models':advertisied_filtered_property_models 
+        }
+    
+    return render(request, 'doormot_property_listing/property_more_details.html', context)

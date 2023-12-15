@@ -233,14 +233,48 @@ for_sale.addEventListener('onclick', SubmitEvent)
 
 
 
+document.addEventListener("DOMContentLoaded", function() {
+    const lazyImages = document.querySelectorAll('.lazy-image');
+
+    const observer = new IntersectionObserver(entries => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                const img = entry.target;
+                img.src = img.dataset.src;
+                observer.unobserve(img);
+            }
+        });
+    });
+
+    lazyImages.forEach(image => {
+        observer.observe(image);
+    });
+});
 
 
+// To Diplay Filter Search Box - 
+// To allow user interract with options to filter search  
+function displayFilterPropertyUsernameForm() {
+    var filter_property = document.getElementById('filterPropertyUsernameFormDiv');
+    var filter_property_form_button = document.getElementById('filterPropertyUsernameFormButton');
 
+    if (filter_property.style.display === 'none' || filter_property.style.display === '') {
+        filter_property.style.display = 'block';
+        filter_property_form_button.innerHTML = `<p>Filter properties with username</p> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="#ffffff" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 19V6M5 12l7-7 7 7"/>
+      </svg>`;
+      
+    } else {
+        filter_property.style.display = 'none';
+        filter_property_form_button.innerHTML = `<p>Filter properties with username</p> <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="24" height="24" fill="#ffffff" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M12 5v13M5 12l7 7 7-7"/>
+    </svg>`;
+    }
 
+}
 
-
-
-
+var filter_property_form_button = document.getElementById('filterPropertyUsernameFormButton')
+filter_property_form_button.addEventListener('onclick', displayFilterPropertyUsernameForm)
 
 
 let isSliderPaused = false;
@@ -278,3 +312,7 @@ function moveSlider() {
 
         // Start the slider initially
         startSlider();
+
+
+
+       
