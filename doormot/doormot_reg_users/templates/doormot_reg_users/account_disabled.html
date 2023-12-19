@@ -6,19 +6,26 @@
 {% block free-section %}
 
 
-<div class="flex flex-wrap justify-center items-center md:py-10 ">
+<div class="flex flex-wrap justify-center items-center md:py-10 font-popins">
     
     <div class="p-5 mx-5 border border-full rounded-lg shadow-md shadow-gray-800 bg-slate-200 w-1/2">
-        <legend class="py-2 my-3 text-center bg-red-700 text-white font-extrabold text-lg">Your Account Has Been Disabled!</legend>
+        <legend class="py-2 my-3 text-center bg-red-700 text-white font-extrabold text-lg">Dear {{ user_object }} Your Account Has Been Disabled!</legend>
+        {% if login_attempts_exceeded_disabled_message %}
+        <div class=" text-red-700 border-red-700 border-2 text-center p-2">
+            <p>{{ login_attempts_exceeded_disabled_message }}</p>
+            <p>Kindly follow the process to reactivate your account</p>
+            <p>If you encounter any trouble please reach out to customer care</p>
+        </div>
+        {% endif %}
+        {% if message %}
+        <div class=" text-red-700 border-red-700 border-2 text-center">
+            <p>{{ message }}</p>
+            <p>Kindly check your username and/or password!</p>
+            <p>Please select the appropraite Account Type!</p>
+            <p></p>
+        </div>
+        {% endif %}
         <div class="p-2 mx-5 justify-center">
-            {% if message %}
-                <div class=" text-red-700 border-red-700 border-2 text-center">
-                    <p>{{ message }}</p>
-                    <p>Kindly check your username and/or password!</p>
-                    <p>Please select the appropraite Account Type!</p>
-                    <p></p>
-                </div>
-            {% endif %}
             <form id="typeForm" method="get" class="p-4 m-2" action="{% url 'doormot-reg-users-login' %}">
                 <legend class="py-2 my-3 text-center bg-orange-600 text-white font-extrabold text-lg">Please Select Your Account Type</legend>
                 <select id="userTypeSelect" name='user_type' class="bg-purple-950 text-white text-center w-full p-1">
@@ -49,7 +56,7 @@
                         {{ form | crispy }}
     
                         <div class="hidden">
-                            <h1 class="py-3 my-3 text-center font-sans font-extrabold text-red-600">Verification code sent to?</h1>
+                            <h1 class="py-3 my-3 text-center font-popins font-extrabold text-red-600">Verification code sent to?</h1>
                         <div class="justify-between flex">
                             <div class="flex items-center justify-between">
                                 <input type="radio" id="otp_phone" name="otp_method" value="phone_number" class="form-radio h-5 w-5 text-blue-500">

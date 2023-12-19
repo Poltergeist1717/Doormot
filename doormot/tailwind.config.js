@@ -8,6 +8,11 @@ module.exports = {
   ],
   theme: {
     extend: {
+      fontFamily:{
+        'popins':['Poppins', 'sans-serif'],
+        'open':['Open Sans', 'sans-serif'],
+        'nunito':['Nunito Sans', 'sans-serif'],
+      },
     },
   },
   plugins: [],

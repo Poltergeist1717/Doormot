@@ -154,6 +154,22 @@ var upload_property_icon = document.getElementById('upload-property-label');
 upload_property_icon.addEventListener('onmouseover', displayUploadPropertyLabel);
 
 
+// To Diplay Upload Property buttton Icon Label - 
+// Enables user to know what the button icon is for 
+// function displayUploadPropertyLabel() {
+//     var upload_property_name = document.getElementById('upload-property-label');
+
+//     if (upload_property_name.style.display === 'none' || upload_property_name.style.display === '') {
+//         upload_property_name.style.display = 'flex';
+//     } else {
+//         upload_property_name.style.display = 'none';
+//     }
+
+// }
+// var upload_property_icon = document.getElementById('upload-property-label');
+// upload_property_icon.addEventListener('onmouseover', displayUploadPropertyLabel);
+
+
 // To change Book Mark Icon - 
 // To show user has bookmarked 
 function changeBookMarkIcon(propertyID) {

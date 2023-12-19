@@ -111,10 +111,18 @@ class Return_Model_Object_Fields_Handler:
         except Exception as e:
             logger.exception("There was an exception: %s", e)
 
-    def set_field_value(self, field_name, desired_value):
+    def set_field_value(self, field_name, desired_value, **kwargs):
+        self.field_name = field_name
+        
         try:
-            self.field_name = field_name
-            user_object = self.return_user_object()
+            if kwargs:
+                # If additional kwargs are provided, use them
+                model_kwargs = kwargs
+            else:
+                # Otherwise, use the kwargs from the class instantiation
+                model_kwargs = self.model_kwargs
+
+            user_object = self.return_user_object(**model_kwargs)
             if user_object is not None:
                 user_object.__setattr__(self.field_name, desired_value)
                 user_object.save()

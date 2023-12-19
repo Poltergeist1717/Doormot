@@ -6,7 +6,7 @@ from django.views.generic import ListView
 from .forms import To_Let_Listed_Properties_Form, For_Sale_Listed_Properties_Form
 from .models import To_Let_Listed_Properties, To_Let_Properties_Images, For_Sale_Listed_Properties, For_Sale_Properties_Images
 from doormot_app.doormot_app_modules import return_user_object
-from .modules import load_property_objects
+from .modules import load_property_objects, return_property_model_images
 from django.contrib.contenttypes.models import ContentType
 from django.core.files.uploadedfile import SimpleUploadedFile
 from django.db.models import Q
@@ -367,7 +367,6 @@ class filtered_property_view(ListView):
         context['user_type'] = user_type
         context['for_sale'] = for_sale
         context['price_tag'] = price_tag
-        context['filter_conditions'] = filter_conditions
         context['filter_property_tag'] = filter_property_tag
         return context
     
@@ -592,96 +591,100 @@ class filter_property_by_username(ListView):
 #        Handles creating property image instance for both types - For Sale and To Let
 #        Resets False log count field to default
 def property_more_details(request):
+
+    user_type = request.session.get('user_type')
+    user_pk = request.session.get('user')
+    user = return_user_object(user_pk, user_type)
+
+    if user is not None and user.is_authenticated and user.is_active:
     
-    for_sale = request.GET.get('for_sale')
-    request.session['for_sale'] = for_sale
-    desired_town_city = request.GET.get('city')
-    desired_state = request.GET.get('state')
-    property_type = request.GET.get('property_type')
-    property_status = request.GET.get('property_status')
-    desired_max_price = request.GET.get('max_price')
+        for_sale = request.GET.get('for_sale')
+        request.session['for_sale'] = for_sale
+        desired_town_city = request.GET.get('city')
+        desired_state = request.GET.get('state')
+        property_type = request.GET.get('property_type')
+        property_status = request.GET.get('property_status')
+        desired_max_price = request.GET.get('max_price')
 
-    template = "property_more_details"
+        template = "property_more_details"
 
-        
-    if for_sale == 'No':
-        model = To_Let_Listed_Properties
-        price_tag = "Rent"
-        filter_property_tag = "To Let"
-        
-    elif for_sale == 'Yes':
-        model = For_Sale_Listed_Properties
-        price_tag = "Asking"
-        filter_property_tag = "For Sale"
-    else:
-        model = To_Let_Listed_Properties
-        price_tag = "Rent"
-        filter_property_tag = "To Let"
-
-    filter_conditions = {}
-    advertisied_property_models_filter_conditions = {}
-
-    properprty_id = request.GET.get("property_model_id")
-
-    if properprty_id:
-        filter_conditions["id"] = properprty_id
-
-    property_model = load_property_objects.get_filtered_queryset(model=model, filter_conditions=filter_conditions)
-
-
-    if desired_town_city:
-        advertisied_property_models_filter_conditions['city'] = desired_town_city
-
-    if desired_state:
-        advertisied_property_models_filter_conditions['state'] = desired_state
-
-    if property_type:
-        advertisied_property_models_filter_conditions['property_type'] = property_type
-
-    if property_status:
-        advertisied_property_models_filter_conditions['property_status'] = property_status
-    
-    if for_sale == 'No':
-        if desired_max_price:
-            advertisied_property_models_filter_conditions['rent_price__lte'] = desired_max_price
-
-    if for_sale == 'Yes':
-        if desired_max_price:
-            advertisied_property_models_filter_conditions['asking_price__lte'] = desired_max_price
-
-
-    advertisied_filtered_property_models = load_property_objects.get_filtered_queryset(model=model, filter_conditions=advertisied_property_models_filter_conditions)
-    
-    print(f"Advertisied filtered property models: {advertisied_filtered_property_models}")
-    
-    def return_multiple_images(property_model):
-        for properties in property_model:
-            print(properties.address)
-
-            if for_sale == 'No':
-                all_images = properties.to_let_properties_images_set.all()
-                first_image = properties.to_let_properties_images_set.first()
-                
-            elif for_sale == 'Yes':
-                all_images = properties.for_sale_properties_images_set.all()
-                first_image = properties.for_sale_properties_images_set.first()
-                
-            else:
-                all_images = properties.to_let_properties_images_set.all()
-                first_image = properties.to_let_properties_images_set.first()
             
-            return all_images, first_image
+        if for_sale == 'No':
+            model = To_Let_Listed_Properties
+            price_tag = "Rent"
+            filter_property_tag = "To Let"
+            
+        elif for_sale == 'Yes':
+            model = For_Sale_Listed_Properties
+            price_tag = "Asking"
+            filter_property_tag = "For Sale"
+        else:
+            model = To_Let_Listed_Properties
+            price_tag = "Rent"
+            filter_property_tag = "To Let"
 
-    all_images, first_image = return_multiple_images(property_model)
+        filter_conditions = {}
+        advertisied_property_models_filter_conditions = {}
 
-    context = {
-        'title':'Property Details', 
-        'property_model':property_model, 
-        'price_tag':price_tag, 
-        'all_images':all_images, 
-        'first_image':first_image, 
-        'template':template,
-        'advertisied_filtered_property_models':advertisied_filtered_property_models 
-        }
-    
-    return render(request, 'doormot_property_listing/property_more_details.html', context)
+        properprty_id = request.GET.get("property_model_id")
+
+        if properprty_id:
+            filter_conditions["id"] = properprty_id
+
+        property_model = load_property_objects.get_filtered_queryset(model=model, filter_conditions=filter_conditions)
+
+
+        if desired_town_city:
+            advertisied_property_models_filter_conditions['city'] = desired_town_city
+
+        if desired_state:
+            advertisied_property_models_filter_conditions['state'] = desired_state
+
+        if property_type:
+            advertisied_property_models_filter_conditions['property_type'] = property_type
+
+        if property_status:
+            advertisied_property_models_filter_conditions['property_status'] = property_status
+        
+        if for_sale == 'No':
+            if desired_max_price:
+                advertisied_property_models_filter_conditions['rent_price__lte'] = desired_max_price
+
+        if for_sale == 'Yes':
+            if desired_max_price:
+                advertisied_property_models_filter_conditions['asking_price__lte'] = desired_max_price
+
+
+        advertisied_filtered_property_models = load_property_objects.get_filtered_queryset(model=model, filter_conditions=advertisied_property_models_filter_conditions)
+        
+        print(f"Advertisied filtered property models: {advertisied_filtered_property_models}")
+        
+        
+
+        images = return_property_model_images(property_model=property_model, for_sale=for_sale,)
+        all_images = images.return_all_images() 
+        first_image = images.return_first_image()
+        
+        advertisied_filtered_property_images = return_property_model_images(property_model=advertisied_filtered_property_models, for_sale=for_sale,)
+        advertisied_filtered_property_first_image = advertisied_filtered_property_images.return_first_image()
+        print(f"Advertisied filtered property models first-image : {advertisied_filtered_property_first_image}")
+        
+        context = {
+            'user':user,
+            'for_sale':for_sale,
+            'title':'Property Details', 
+            'property_model':property_model, 
+            'price_tag':price_tag, 
+            'all_images':all_images, 
+            'first_image':first_image, 
+            'template':template,
+            'advertisied_filtered_property_models':advertisied_filtered_property_models,
+            'advertisied_filtered_property_first_image':advertisied_filtered_property_first_image,
+            }
+        
+        return render(request, 'doormot_property_listing/property_more_details.html', context)
+
+    else:
+        property_more_details_failed_message = """Please register before you can use the more details feature!"""
+        return render(request, 'doormot_reg_users/register.html', {'title':'Register', 'property_more_details_failed_message':property_more_details_failed_message})
+

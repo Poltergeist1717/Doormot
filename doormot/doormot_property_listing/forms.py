@@ -1,7 +1,4 @@
 from django import forms
-from django_countries.fields import CountryField
-from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Field, Div, HTML, Submit
 from django.core.exceptions import ValidationError
 from PIL import Image
 from .models import To_Let_Listed_Properties, For_Sale_Listed_Properties
@@ -22,9 +19,7 @@ class To_Let_Listed_Properties_Form(forms.ModelForm):
         
         is_available_for_lease = forms.BooleanField(
             label = "Check the box if the property is available for lease.",
-            widget = forms.BooleanField(),
         )
-
        
 
         model = To_Let_Listed_Properties

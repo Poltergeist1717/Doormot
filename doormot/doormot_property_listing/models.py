@@ -78,7 +78,7 @@ class For_Sale_Listed_Properties(models.Model):
     asking_price = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False, default=None)
     property_status = models.CharField(max_length=50, blank=False, null=False, default=None, choices=PROPERTY_STATUS)
     property_type = models.CharField(max_length=50, blank=False, null=False, default=None, choices=PROPERTY_TYPES)
-    sub_commercial_property_type = models.CharField(max_length=50, blank=False, null=False, default=None, choices=SUB_COMMERCIAL_PROPERTY_TYPES)
+    sub_commercial_property_type = models.CharField(max_length=50, blank=True, null=True, default=None, choices=SUB_COMMERCIAL_PROPERTY_TYPES)
     no_of_bedrooms = models.PositiveIntegerField(blank=False, null=False, default=None)
 
     no_of_livingrooms = models.PositiveIntegerField(blank=False, null=False, default=None)
@@ -185,7 +185,7 @@ class To_Let_Listed_Properties(models.Model):
     rent_price = models.DecimalField(max_digits=10, decimal_places=2)
     property_status = models.CharField(max_length=50, choices=PROPERTY_STATUS)
     property_type = models.CharField(max_length=50, choices=PROPERTY_TYPES)
-    sub_commercial_property_type = models.CharField(max_length=50, blank=False, null=False, default=None, choices=SUB_COMMERCIAL_PROPERTY_TYPES)
+    sub_commercial_property_type = models.CharField(max_length=50, blank=True, null=True, default=None, choices=SUB_COMMERCIAL_PROPERTY_TYPES)
     
     bathroom_is_available = models.CharField(max_length=50, blank=False, null=False, default=None, choices=AVAILABLE)
     toilet_is_available = models.CharField(max_length=50, blank=False, null=False, default=None, choices=AVAILABLE)

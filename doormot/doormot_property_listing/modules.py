@@ -84,3 +84,47 @@ class load_property_objects:
                 return queryset
         else:
             return None
+
+class return_property_model_images:
+
+    def __init__(self, property_model, for_sale, **kwargs):
+        self.property_model = property_model
+        self.for_sale = for_sale
+    
+    def return_all_images(self):
+        try:
+            for properties in self.property_model:
+            
+                if self.for_sale == 'No':
+                    all_images = properties.to_let_properties_images_set.all()
+                    
+                elif self.for_sale == 'Yes':
+                    all_images = properties.for_sale_properties_images_set.all()
+                    
+                else:
+                    all_images = properties.to_let_properties_images_set.all()
+                
+                if all_images is not None:
+                    return all_images
+        except Exception as e:
+            logger.exception("There was error(s) processing the image: %s", e)
+
+    def return_first_image(self):
+        try:
+            for properties in self.property_model:
+                
+            
+                if self.for_sale == 'No':
+                    first_image = properties.to_let_properties_images_set.first()
+                    
+                elif self.for_sale == 'Yes':
+                    first_image = properties.for_sale_properties_images_set.first()
+                    
+                else:
+                    first_image = properties.to_let_properties_images_set.first()
+
+                if first_image is not None:
+                    return first_image
+                
+        except Exception as e:
+            logger.exception("There was error(s) processing the image: %s", e)

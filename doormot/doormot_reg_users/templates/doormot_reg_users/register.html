@@ -39,6 +39,12 @@
               <p>Thank you for your cooperation!</p>
             </div>
             {% endif %}
+            
+            {% if property_more_details_failed_message %}
+            <div class="text-center text-red-700 border border-red-700 text-sm font-bold p-4">
+              <p>{{ property_more_details_failed_message }}</p>
+            </div>
+            {% endif %}
       
               <div class="p-2 mx-5 justify-center ">
                   <form id="typeForm" method="get" class="p-4 m-2" action="#">
@@ -70,14 +76,14 @@
         <div class="flex fixed top-0 justify-between w-screen border shadow-md shadow-gray-800 bg-purple-950">
 
           <!----logo Section-->
-          <div class="px-3 m-2">
+          <div class="px-3">
             <div class="text-xl font-extrabold text-orange-600">
-              <span><a href="{% url 'doormot-home' %}">Doormot</a></span>
+             <a href="{% url 'doormot-home' %}"><span>Doormot</span></a>
             </div>
           </div>
   
           <!----nav-bar menu section-->
-          <div class="p-x m-2 flex justify-between" id="content-box">
+          <div class="p-x flex justify-between" id="content-box">
 
             <div class="p-x m-2">
               <ul class="sm:text-sm md:text-lg flex space-x-5 text-white"  id="navlist">
@@ -95,7 +101,7 @@
                 </li>
                 
                 <li class="relative group">
-                    <a href="#" class="hover:text-orange-600 hover:font-extrabold">TENANT</a>
+                    <a href="#" class="hover:text-orange-600 hover:font-extrabold ">TENANT</a>
                     <ul class="absolute hidden mt-2 space-y-2 bg-purple-950 border rounded-lg shadow-lg group-hover:block">
                         <li><a href="{% url 'doormot-reg-users-individual-tenant' %}" class="block px-4 py-2 hover:text-orange-600 hover:font-extrabold">Individual</a></li>
                         <li><a href=" {% url 'doormot-reg-users-private-organization-tenant' %}" class="block px-4 py-2 hover:text-orange-600 hover:font-extrabold">Organization</a></li>

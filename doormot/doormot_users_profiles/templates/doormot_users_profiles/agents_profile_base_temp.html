@@ -21,12 +21,21 @@
     <div class="container">
 
     {% block top-section %}
-      <div class=" w-screen h-auto">
-        <div class="relative">
+      <div class="w-screen h-auto">
+        <div class="bg-slate-600 w-screen py-10 grid grid-cols-2 border shadow-sm">
+          <div class="px-3 py-1 m-2 col-span-1">
+              <div class="font-serif py-2 m-2 font-extrabold text-purple-950 text-center text-smrounded-lg">
+                  <h3>Welcome Back<br><span class="">{{ user.username }}</span></h3>
+              </div>
+          </div>
+      </div>
+       
+      <!-- This div is the relative box holding the profile picture in place -->
+      <div class="relative">
          
         </div>
-        <div class="flex justify-center items-center absolute inset-0 h-3 bg-orange-600 my-52">
-          <div class="flex rounded-full border border-full border-orange-600  shadow-md shadow-gray-600 overflow-hidden w-40 h-40 p-1 bg-orange-600  justify-center items-center">
+        <div class="flex justify-center items-center absolute inset-0 h-2 bg-purple-950 my-40">
+          <div class="flex rounded-full border border-full border-purple-950  shadow-md shadow-gray-600 overflow-hidden w-40 h-40 p-1 bg-purple-950  justify-center items-center">
               <img src="{% static 'doormot_app/blog-1.jpg' %}" alt="The image" class="object-cover w-full h-full rounded-full">
           </div>   
         </div>
@@ -38,16 +47,16 @@
       <div class="flex fixed top-0 justify-between w-screen border shadow-md shadow-gray-800 bg-purple-950">
 
         <!----logo Section-->
-        <div class="px-3 m-2">
+        <div class="px-3">
           <div class="text-xl font-extrabold text-orange-600">
             <span><a href="{% url 'doormot-home' %}">Doormot</a></span>
           </div>
         </div>
         
         <!----nav-bar menu section-->
-        <div class="p-x m-2 block md:flex justify-between" id="content-box">
+        <div class="m-1 block md:flex justify-between" id="content-box">
 
-          <div class="p-x m-2">
+          <div class="m-1">
             <ul class="block sm:hidden md:flex space-x-5 text-white" id="navlist">
               {% block navlist %}
               <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-home' %}">HOME</a></li>
@@ -65,20 +74,20 @@
               {% block navlist-right-header %}
               {% if user.is_authenticated %}
               <button>
-                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#ffffff">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="#ffffff">
                   <path d="M80-560q0-100 44.5-183.5T244-882l47 64q-60 44-95.5 111T160-560H80Zm720 0q0-80-35.5-147T669-818l47-64q75 55 119.5 138.5T880-560h-80ZM160-200v-80h80v-280q0-83 50-147.5T420-792v-28q0-25 17.5-42.5T480-880q25 0 42.5 17.5T540-820v28q80 20 130 84.5T720-560v280h80v80H160Zm320-300Zm0 420q-33 0-56.5-23.5T400-160h160q0 33-23.5 56.5T480-80ZM320-280h320v-280q0-66-47-113t-113-47q-66 0-113 47t-47 113v280Z"/>
                 </svg>
               </button>
 
               <button>
-                <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 -960 960 960" width="24" fill="#ffffff">
+                <svg xmlns="http://www.w3.org/2000/svg" height="20" viewBox="0 -960 960 960" width="20" fill="#ffffff">
                   <path d="M240-400h320v-80H240v80Zm0-120h480v-80H240v80Zm0-120h480v-80H240v80ZM80-80v-720q0-33 23.5-56.5T160-880h640q33 0 56.5 23.5T880-800v480q0 33-23.5 56.5T800-240H240L80-80Zm126-240h594v-480H160v525l46-45Zm-46 0v-480 480Z"/>
                 </svg>                                         
               </button>
-              <li class="m-2 md:border md:border-full md:justify-center md:items-center md:border-orange-600 md:rounded-full px-2 py-1 md:bg-purple-700 md:hover:bg-orange-600"><a href="{% url 'doormot_custom_logout' %}"><small>Log out</small></a></li>
+              <li class="m-1 md:border md:border-full md:justify-center md:items-center md:border-orange-600 md:rounded-full px-2 py-1 md:bg-purple-700 md:hover:bg-orange-600"><a href="{% url 'doormot_custom_logout' %}"><small>Log out</small></a></li>
               {% else %}
-              <li class="m-2 md:border md:border-full md:justify-center md:items-center md:border-orange-600 md:rounded-full px-2 py-1 md:bg-purple-700 md:hover:bg-orange-600"><a href="{% url 'doormot-reg-users-login' %}"><small>Login</small></a></li>
-              <li class="m-2 md:border md:border-full md:justify-center md:items-center md:border-orange-600 md:rounded-full px-2 py-1 md:bg-purple-700 md:hover:bg-orange-600"><a href="{% url 'doormot-reg-users-register' %}"><small>Sign up</small></a></li>
+              <li class="m-1 md:border md:border-full md:justify-center md:items-center md:border-orange-600 md:rounded-full px-2 py-1 md:bg-purple-700 md:hover:bg-orange-600"><a href="{% url 'doormot-reg-users-login' %}"><small>Login</small></a></li>
+              <li class="m-1 md:border md:border-full md:justify-center md:items-center md:border-orange-600 md:rounded-full px-2 py-1 md:bg-purple-700 md:hover:bg-orange-600"><a href="{% url 'doormot-reg-users-register' %}"><small>Sign up</small></a></li>
               {% endif %}
               {% endblock navlist-right-header %}
             </ul>
@@ -100,30 +109,13 @@
     <!--###################################################### Free Section Starts #################################################--> 
 
     <section>
-      {% block free-section %}
-
-  
-      <div class="bg-black h-40 w-screen grid grid-cols-2">
-        <div class="px-3 py-1 m-2 col-span-1">
-            <div class="font-serif py-2 m-2 font-extrabold text-orange-600 text-center text-sm bg-black rounded-lg">
-                <h3>Welcome Back<br><span class="text-white">{{ user.username }}</span></h3>
-            </div>
-        </div>
-    </div>
-
-    <div class="w-screen flex justify-end items-end">
-      <div class="bg-black md:w-96 sm:w-80 text-white md:font-serif sm:font-sans font-thin text-center text-xs rounded-bl-full py-1 sm:pl-4 md:px-3">
-        <p>Agent ID: {{ user.agent_id }}</p>
-      </div>
-
-    </div>
-
-    <div class="bg-black w-screen py-3 my-20">
+      {% block free-section %} 
+    <div class="bg-purple-950 w-screen py-3 my-20">
       <div class="text-white text-center px-3 flex justify-center items-center gap-4">
         <h6 class="text-lg font-sans">{{ user.username }}</h6>
         <p>{{ user.email }}</p>
         <h1>{{ user.phone_number }}</h1>
-        
+        <p>Agent ID: {{ user.agent_id }}</p>  
     </div>
   </div>
   

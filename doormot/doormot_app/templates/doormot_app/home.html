@@ -14,7 +14,7 @@
 <div class="w-full h-70 flex justify-center">
 
     <!-- Top call to action box -->
-    <div class="flex justify-between px-3 py-1 m-2">
+    <div class="flex justify-between px-3 py-1 m-2 font-popins">
 
         <div class="rounded-lg p-5 bg-purple-950 shadow-md shadow-white border rounded-tl-3xl rounded-br-3xl mx-4">
           
@@ -46,7 +46,7 @@
     </div>
 
     <div class="px-6 py-2 m-2 border shadow-sm shadow-white rounded-lg justify-center">
-        <div class="text-white text-center p-4 bg-orange-600 shadow-md shadow-white border rounded-tl-3xl rounded-br-3xl">
+        <div class="font-serif text-white text-center p-4 bg-orange-600 shadow-md shadow-white border rounded-tl-3xl rounded-br-3xl">
             <h2>No.1 place renters and buyers find the perfect property.</h2>
             <p>Matchmaking the perfect roommate for renters in need of roommate</p>
             <p>Experience properties rentals and sales in the most modern way</p>
@@ -62,10 +62,10 @@
 
 <!--Search Bar Section-->
 {% block serach-bar-section %}
-<form action="#" method="get" class="p-3">
+<!-- <form action="#" method="get" class="p-3">
     <input type="text" name="#" placeholder="Search... towns, state, LGAs" class="w-80 text-black mx-2 py-1 text-center focus:outline-none">
     <button type="submit" class="bg-purple-700 hover:bg-orange-600 border border-orange-600 rounded-md text-white text-sm px-4 py-1">Search</button>
-</form>
+</form> -->
 {% endblock serach-bar-section %}
 <!--############################################## Nav Bar Ends ########################################-->
 
@@ -90,21 +90,6 @@
     </div>
 </div>
 
-<div id="slider-container" tabindex="0" onfocus="startSlider()" onblur="pauseSlider()"
-         class="w-96 h-16 overflow-hidden border border-gray-300 relative focus:outline-none">
-        <div id="slider" class="whitespace-nowrap transition-transform duration-500 ease-in-out">
-            <div class="slide inline-block w-full box-border text-center text-2xl px-4 py-2 bg-white">
-                Slide 1
-            </div>
-            <div class="slide inline-block w-full box-border text-center text-2xl px-4 py-2 bg-white">
-                Slide 2
-            </div>
-            <div class="slide inline-block w-full box-border text-center text-2xl px-4 py-2 bg-white">
-                Slide 3
-            </div>
-            <!-- Add more slides as needed -->
-        </div>
-    </div>
 {% endblock available-properties %}
 
 <!--First Column-->
@@ -132,7 +117,7 @@
 
 <!-- Second Section Column2-->
 {% block second-section-column2 %}
-    <div class="bg-purple-950 text-center text-1xl text-white font-serif font-extrabold">
+    <div class="bg-purple-950 text-center text-1xl text-white font-serif">
         <h1 class="py-2">Unlocking Your Comfort In One Click</h1>
     </div>
     <div class="p-3 font-serif">
@@ -146,9 +131,10 @@
                 Click below to find your dream property now!"
             </p>
         </div> 
-        <div>
+        
+        <form action="{% url 'doormot-property-listing-general-listing' %}" method="get" class="">
             <button type="submit" class="bg-purple-700 hover:bg-orange-600 border border-orange-600 rounded-md text-white text-sm px-4 py-1">Find Your Dream Home</button>
-        </div>
+        </form>
     </div>
 {% endblock second-section-column2 %}
 <!--######################################### Second Section Block Ends #################################-->
@@ -229,19 +215,21 @@
     <h1 class="py-2">24/7 Customer Service</h1>
     </div>
     <div class="p-3 font-serif">
-    <div class="p-1 m-2">
-        <h4>Find Your Ideal Property Today!</h4>
-        <p>
-            We specialize in turning your dreams into reality.<br>
-            We are your trusted partner in finding your befitting properties.<br>
-            Connecting renters, buyers, and sellers seamlessly while prioritizing all parties best interests and safety.<br>
-            Take the first step towards a secure and swift journey to your new home.<br>
-            Click below to find your dream property now!"
-        </p>
-    </div> 
-    <div class="flex justify-center items-center">
-        <button type="submit" class="bg-purple-700 hover:bg-orange-600 border border-orange-600 rounded-md text-white text-sm px-4 py-1">Find Your Dream Home</button>
-    </div>
+        <div class="p-1 m-2">
+            <h4>Find Your Ideal Property Today!</h4>
+            <p>
+                We specialize in turning your dreams into reality.<br>
+                We are your trusted partner in finding your befitting properties.<br>
+                Connecting renters, buyers, and sellers seamlessly while prioritizing all parties best interests and safety.<br>
+                Take the first step towards a secure and swift journey to your new home.<br>
+                Click below to find your dream property now!"
+            </p>
+        </div> 
+        <div class="flex justify-center items-center">
+            <button type="submit" class="bg-purple-700 hover:bg-orange-600 border border-orange-600 rounded-md text-white text-sm px-4 py-1">
+                <link href=""> Your Dream Home
+            </button>
+        </div>
     </div>
 {% endblock third-section-column3 %}
 

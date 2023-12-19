@@ -24,6 +24,9 @@ logger = logging.getLogger(__name__)
 
 
 # Type: Class
+# Caution: The user_type, form, log_count_field_name, currently_logged_field_name, username, password 
+#           are very important variables to the functionality of login and logout
+# Imported method/function/class/module: Return_Model_Object_Fields_Handler
 # Name: Doormot Custom Login View
 # Methods: get, post, authenticate_user 
 # Tasks: Handles user authentication
@@ -54,17 +57,17 @@ class DoormotCustomLoginView(LoginView):
         log_count_field_name = 'false_log_count' # Name of model field from which number of allowed false login atttempts is recorded
         handler_instance = Return_Model_Object_Fields_Handler(username=username, user_type=user_type) # Creates the class instance that handles returning user object, setting field value and updating field value.
         false_log_count_field_value = handler_instance.get_field_value(field_name=log_count_field_name, username=username)
-        user_object = handler_instance.return_user_object(username=username)
-
+        user_object = handler_instance.return_user_object(username=username) # Returns user object
+        
         currently_logged_field_name = 'currently_logged_in' # Name of model field from which currently logged in user is recorded
         currently_logged_in_value = handler_instance.get_field_value(field_name=currently_logged_field_name, username=username)
 
         try:
-            form = return_form_type(user_type)
-            title = return_form_title(user_type)
+            form = return_form_type(user_type) # Function to return form type by using user_type selected by user to map the form type
+            title = return_form_title(user_type) # Function to return form title by using user_type selected by user to map form title
                 
             if user_object is not None and false_log_count_field_value is None:
-                handler_instance.set_field_value(field_name=log_count_field_name, desired_value=6)
+                handler_instance.set_field_value(field_name=log_count_field_name, desired_value=6, username=username)
                 false_log_count_field_value = 6 # Variable to hold the default value for false log count field for false log count field update
 
             if currently_logged_in_value == True: # Check if user currently logged in and prevents the use of one account in two places.
@@ -73,25 +76,31 @@ class DoormotCustomLoginView(LoginView):
            
             if user_object is not None and false_log_count_field_value > 0:
                 try:
-                    form = return_form_type(user_type)
-                    title = return_form_title(user_type)
+                    form = return_form_type(user_type) # Function to return form type by using user_type selected by user to map the form type
+                    title = return_form_title(user_type) # Function to return form title by using user_type selected by user to map form title
                     user = self.authenticate_user(request, username, email, password, user_type) # Calls the custom authentication method
                     if user is not None and false_log_count_field_value > 0:
                         if user.is_active:
                             user.backend = 'doormot.doormot_reg_users.backends.DoormotCustomUserBackend' # Points django the backend to use for authentication
                             login(request, user)
                             request.session['user'] = user.pk
-                            handler_instance.set_field_value(field_name=log_count_field_name, desired_value=None) # Resets False log count field to default
-                            handler_instance.set_field_value(field_name=currently_logged_field_name, desired_value=True) # Sets Currently logged in field to True. Prevents the same account to be logged in another place
+                            handler_instance.set_field_value(field_name=log_count_field_name, desired_value=None, username=username) # Resets False log count field to default
+                            handler_instance.set_field_value(field_name=currently_logged_field_name, desired_value=True, username=username) # Sets Currently logged in field to True. Prevents the same account to be logged in another place
                             return render(request, 'doormot_app/home.html', {"title": "Home", "user": user})
                         else:
                             return render(request, 'doormot_reg_users/account_disabled.html', {"title": "Account Disabled", "user": user})
                     elif user is None and false_log_count_field_value > 0:
                         false_log_count_field_value -= 1 # Decreament of false log count variable for false log count field update
-                        handler_instance.set_field_value(field_name=log_count_field_name, desired_value=false_log_count_field_value) # Updates the false log count field to the new decreased value
+                        handler_instance.set_field_value(field_name=log_count_field_name, desired_value=false_log_count_field_value, username=username) # Updates the false log count field to the new decreased value
                         message = f"Error: Login Failed! You have {false_log_count_field_value} attempts left!"
                         return render(request, 'doormot_reg_users/login.html', {"title": "Login", 'form': form, 'title': title, 'user_type': user_type, 'message':message})
+                    elif user is None and false_log_count_field_value <= 0:
+                        user.is_active = False # Deactivate the account - because number of login attempts have been exceeded
+                        login_attempts_exceeded_disabled_message = """Because you have exceeded the number of login attempts!"""
+                        return render(request, 'doormot_reg_users/account_disabled.html', {"title": "Account Disabled", "user": user})
                     else:
+                        user.is_active = False # Deactivate the account - because number of login attempts have been exceeded
+                        login_attempts_exceeded_disabled_message = """You are trying to break into the login system!"""
                         return render(request, 'doormot_reg_users/account_disabled.html', {"title": "Account Disabled", "user": user})
                 except Exception as e:
                     logger.exception('There was an Error logging in: %s', e)
@@ -99,6 +108,14 @@ class DoormotCustomLoginView(LoginView):
             elif user_object is None and false_log_count_field_value is None:
                 message = "You do not have an account with us."
                 return render(request, 'doormot_reg_users/register.html', {'title': 'Register', 'message': message})
+            elif user_object is not None and false_log_count_field_value == 0:
+                login_attempts_exceeded_disabled_message = """Because you have exceeded the number of login attempts!"""
+                context = {
+                    "title": "Account Disabled", 
+                    'user_object':user_object, 
+                    'login_attempts_exceeded_disabled_message':login_attempts_exceeded_disabled_message
+                    }
+                return render(request, 'doormot_reg_users/account_disabled.html', context)
             else:
                 message = "You do not have an account with us."
                 return render(request, 'doormot_reg_users/register.html', {'title': 'Register', 'message': message})
@@ -126,9 +143,9 @@ class DoormotCustomLogoutView(View):
         username = request.session.get('username')
         user_type = request.session.get('user_type')
         currently_logged_field_name = 'currently_logged_in'
-        handler_instance = Return_Model_Object_Fields_Handler(username=username, user_type=user_type) # Creates the class instance that handles returning user object, setting field value and updating field value.
+        handler_instance = Return_Model_Object_Fields_Handler(username=username, user_type=user_type,) # Creates the class instance that handles returning user object, setting field value and updating field value.
         logout(request) # Call the django built-in logout function to log out the current user
-        handler_instance.set_field_value(field_name=currently_logged_field_name, desired_value=False) # Sets Currently logged in field to False. (Enables user to log in another time)
+        handler_instance.set_field_value(field_name=currently_logged_field_name, desired_value=False, username=username) # Sets Currently logged in field to False. (Enables user to log in another time)
        
         return redirect('doormot-home')
 
