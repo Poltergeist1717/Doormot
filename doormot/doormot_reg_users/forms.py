@@ -578,10 +578,58 @@ class Doormot_User_Independent_Agent_Registration_Form(UserCreationForm):
         required = True,
     )
 
+    name_of_first_pet = forms.CharField(
+        label = 'What is the name of your first pet?',
+        widget = forms.TextInput(attrs={'placeholder':'name of first pet', 'class':'w-64 p-2 border rounded-md'}),
+        error_messages = {
+            'required': 'Please provide an answer to the question!',
+        },
+        required = True,
+    )
+
+    name_of_high_school_attended = forms.CharField(
+        label = 'What is the name of the high school you attended?',
+        widget = forms.TextInput(attrs={'placeholder':'Name of hihg school attended', 'class':'w-64 p-2 border rounded-md'}),
+        error_messages = {
+            'required': 'Please provide an answer to the question!',
+        },
+        required = True,
+    )
+
+    name_of_mother_place_of_birth = forms.CharField(
+        label = "Where is your mother's place of birth?",
+        widget = forms.TextInput(attrs={'placeholder':"Mother's place of birth", 'class':'w-64 p-2 border rounded-md'}),
+        error_messages = {
+            'required': 'Please provide an answer to the question!',
+        },
+        required = True,
+    )
+
+    favorite_movie_title = forms.CharField(
+        label = "What is the title of your favorite movie?",
+        widget = forms.TextInput(attrs={'placeholder':"Favorite movie title", 'class':'w-64 p-2 border rounded-md'}),
+        error_messages = {
+            'required': 'Please provide an answer to the question!',
+        },
+        required = True,
+    )
+
+    last_name_of_favorite_high_school_teacher = forms.CharField(
+        label = "What is the last name of your favorite high school teacher?",
+        widget = forms.TextInput(attrs={'placeholder':"Last name of favorite high school teacher", 'class':'w-64 p-2 border rounded-md'}),
+        error_messages = {
+            'required': 'Please provide an answer to the question!',
+        },
+        required = True,
+    )
+
+
+
+
 
     class Meta:
         model = Doormot_User_Independent_Agent
-        fields = ('username', 'password1',  'password2', 'email', 'phone_number', 'date_of_birth')
+        fields = ('username', 'password1',  'password2', 'email', 'phone_number', 'date_of_birth', 'name_of_first_pet', 'name_of_high_school_attended', 'name_of_mother_place_of_birth', 'favorite_movie_title', 'last_name_of_favorite_high_school_teacher')
 
     def clean_email(self):
         email = self.cleaned_data['email']

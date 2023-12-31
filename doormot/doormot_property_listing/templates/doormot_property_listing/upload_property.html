@@ -7,7 +7,7 @@
 
 
 {% block top-section %}
-<div class= "flex mt-20 justify-center">
+<div class= "flex mt-10 justify-center">
     {% if message %}
         <div class="text-center text-red-600 font-semibold border border-red-600 p-3 h-40 w-1/2 overflow-hidden">
             <p>{{ message }}</p>
@@ -25,17 +25,17 @@
     {% endif %}
 </div> 
 
-<div class="flex items-center justify-center my-10">
+<div class="flex items-center justify-center mt-4">
     <div class="p-2 mx-5 flex items-center justify-center  w-1/3">      
         <form id="typeForm" method="get" class="p-4 m-2" action="{% url 'doormot-property-listing-upload-property' %}">
             <h1 class="py-3 my-3 text-center font-sans font-extrabold text-red-600">Is this property for sale?</h1>
             {% csrf_token %}
             <div class="flex justify-between border rounded-md shadow-sm shadow-orange-600 p-5 m-2 w-60">
                 <div class="flex items-center justify-between">
-                    <input type="submit" id="for_sale" name="for_sale" value="Yes" class="form-radio h-16 w-16 bg-purple-700 hover:bg-orange-600 border-orange-600 rounded-md text-white text-sm px-4 py-1">          
+                    <input type="submit" id="for_sale" name="for_sale" value="Yes" class="form-radio h-8 w-8 bg-purple-700 hover:bg-orange-600 border-orange-600 rounded-md text-white text-xs px-2 py-1">          
                 </div>
                 <div class="flex items-center justify-between">
-                    <input type="submit" id="for_sale" name="for_sale" value="No"  class="form-radio h-16 w-16 bg-purple-700 hover:bg-orange-600 border-orange-600 rounded-md text-white text-sm px-4 py-1">
+                    <input type="submit" id="for_sale" name="for_sale" value="No"  class="form-radio h-8 w-8 bg-purple-700 hover:bg-orange-600 border-orange-600 rounded-md text-white text-xs px-2 py-1">
                 </div>
             </div>
         </form>
@@ -43,16 +43,719 @@
 </div>
 {% if for_sale %}
 <div class="flex items-center justify-center">
-        <div class="m-3 border border-full shadow-sm shadow-slate-800 w-1/2">
-            <legend class="py-1 w-full text-center bg-purple-950 text-white"> {{ name }} </legend>
+        <div class="m-3 border border-full shadow-sm shadow-slate-800 w-full bg-orange-600">
+            <legend class="p-2 w-full text-center bg-purple-950 text-white font-serif text-xl"> {{ name }} </legend>
             
             <form method="post" class="p-4 m-2" action="{% url 'doormot-property-listing-upload-property' %}" enctype="multipart/form-data">               
                 {% csrf_token %}                
-                <div>
-                   {{ form | crispy }}   
+                
+                <div class="p-2 font-serif">
+                    <p> Select Type of property</p>
+                    <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="property_type" required>
+                        <option selected onclick="hideTypeOfPropMoreInfo(['others-property-type', 'land-more-details', 'Commercial-property-sub', 'more-details-property', 'to-let-available-amenities', 'no-of-rooms'])"></option>
+                        <option onclick="showTypeOfPropMoreInfo(['land-more-details',]); hideTypeOfPropMoreInfo(['others-property-type', 'Commercial-property-sub', 'more-details-property', 'no-of-rooms', 'to-let-available-amenities'])">Land</option>
+                        <option onclick="hideTypeOfPropMoreInfo(['land-more-details', 'Commercial-property-sub', 'others-property-type']); showTypeOfPropMoreInfo(['more-details-property', 'no-of-rooms', 'to-let-available-amenities'])">Bungalow</option>
+                        <option onclick="hideTypeOfPropMoreInfo(['land-more-details', 'Commercial-property-sub', 'others-property-type']); showTypeOfPropMoreInfo(['more-details-property', 'no-of-rooms', 'to-let-available-amenities'])">Duplex</option>
+                        <option onclick="hideTypeOfPropMoreInfo(['land-more-details', 'Commercial-property-sub', 'others-property-type']); showTypeOfPropMoreInfo(['more-details-property', 'no-of-rooms', 'to-let-available-amenities'])">Detached House</option>
+                        <option onclick="hideTypeOfPropMoreInfo(['land-more-details', 'Commercial-property-sub', 'others-property-type']); showTypeOfPropMoreInfo(['more-details-property', 'no-of-rooms', 'to-let-available-amenities'])">Terraced House</option>
+                        <option onclick="hideTypeOfPropMoreInfo(['land-more-details', 'Commercial-property-sub', 'others-property-type']); showTypeOfPropMoreInfo(['more-details-property', 'no-of-rooms', 'to-let-available-amenities'])">Block of Flats</option>
+                        <option onclick="hideTypeOfPropMoreInfo(['land-more-details', 'Commercial-property-sub', 'others-property-type']); showTypeOfPropMoreInfo(['more-details-property', 'no-of-rooms', 'to-let-available-amenities'])">Mansion</option>
+                        <option onclick="hideTypeOfPropMoreInfo(['land-more-details', 'Commercial-property-sub', 'others-property-type', 'no-of-rooms']); showTypeOfPropMoreInfo(['more-details-property', 'to-let-available-amenities'])">Self-contained Apartment</option>
+                        <option onclick="showTypeOfPropMoreInfo(['Commercial-property-sub']); hideTypeOfPropMoreInfo(['others-property-type', 'land-more-details', 'more-details-property', 'to-let-available-amenities', 'no-of-rooms'])">Commercial Building</option>
+                        <option onclick="showTypeOfPropMoreInfo(['more-details-property']); hideTypeOfPropMoreInfo(['others-property-type', 'Commercial-property-sub', 'land-more-details', 'to-let-available-amenities', 'no-of-rooms'])">Residential Estate</option>
+                        <option onclick="showTypeOfPropMoreInfo(['to-let-available-amenities', 'no-of-rooms', 'more-details-property', 'others-property-type']); hideTypeOfPropMoreInfo(['Commercial-property-sub', 'land-more-details'])">Others</option>
+                    </select>
+                    <input type="text" placeholder="Please provide name for property type" class="mt-2 w-full p-2 rounded text-center font-serif hidden" id="others-property-type" name="property_type">
                 </div>
+                <div class="p-2 font-serif hidden" id="Commercial-property-sub">
+                    <div class="p-2 mb-4 font-serif">
+                        <p >Property Status</p>
+                        <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="property_status" required>
+                            <option selected></option>
+                            <option>Renovated</option>
+                            <option>New</option>
+                            <option>Old</option>
+                        </select>
+                    </div>
+
+                    <p>Select the type of Commercial Building</p>
+                    <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="sub_commercial_property_type" required>
+                        <option onclick="hideComSubBuildMoreInfo(['com-building-others', 'sub-school-building', 'sub-medical-building'])" selected></option>
+                        <option onclick="hideComSubBuildMoreInfo(['com-building-others', 'sub-school-building', 'sub-medical-building'])">Shopping Complex</option>
+                        <option onclick="hideComSubBuildMoreInfo(['com-building-others', 'sub-school-building', 'sub-medical-building'])">Office Space</option>
+                        <option onclick="hideComSubBuildMoreInfo(['com-building-others', 'sub-school-building', 'sub-medical-building'])">Shop Units</option>
+                        <option onclick="showComSubBuildMoreInfo(['sub-school-building']); hideComSubBuildMoreInfo('com-building-others', 'sub-medical-building')">School Building</option>
+                        <option onclick="showComSubBuildMoreInfo(['sub-medical-building']); hideComSubBuildMoreInfo(['com-building-others', 'sub-school-building'])">Medical Building</option>
+                        <option onclick="hideComSubBuildMoreInfo(['com-building-others', 'sub-school-building', 'sub-medical-building'])">Petrol Station</option>
+                        <option onclick="hideComSubBuildMoreInfo(['com-building-others', 'sub-school-building', 'sub-medical-building'])">Restaurant Building</option>
+                        <option onclick="showComSubBuildMoreInfo(['com-building-others']); hideComSubBuildMoreInfo(['sub-school-building', 'sub-medical-building'])">Others</option>
+                    </select>
+                    <div class="mt-4 hidden" id="com-building-others">
+                        <input type="text" placeholder="Please provide name for property type" class="mt-2 w-full p-2 rounded text-center font-serif" name="sub_commercial_property_type">
+                    </div>
+
+                    <!-- Sub School Building Details Section -->
+                    <div class="mt-4 p-2 shadow-md border mb-4 font-serif hidden" id="sub-school-building">
+
+                        <p>Select the type of School Building</p>
+                        <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="sub_school_type" required>
+                            <option onclick="hideQuestMoreInfo('sub-school-building-others')" selected></option>
+                            <option onclick="hideQuestMoreInfo('sub-school-building-others')">Nursery School Only</option>
+                            <option onclick="hideQuestMoreInfo('sub-school-building-others')">Primary School Only</option>
+                            <option onclick="hideQuestMoreInfo('sub-school-building-others')">Secondary School Only</option>
+                            <option onclick="hideQuestMoreInfo('sub-school-building-others')">Nursery and Primary School Only</option>
+                            <option onclick="hideQuestMoreInfo('sub-school-building-others')">Nursery, Primary and Scondary School</option>
+                            <option onclick="hideQuestMoreInfo('sub-school-building-others')">A University</option>
+                            <option onclick="hideQuestMoreInfo('sub-school-building-others')">A College of Education</option>
+                            <option onclick="hideQuestMoreInfo('sub-school-building-others')">A Polytechnic</option>
+                            <option onclick="hideQuestMoreInfo('sub-school-building-others')">An Arabic School</option>
+                            <option onclick="hideQuestMoreInfo('sub-school-building-others')">An Apprenticeship/Vocational Training Center</option>
+                            <option onclick="hideQuestMoreInfo('sub-school-building-others')">A Montessori School</option>
+                            <option onclick="showQuestMoreInfo('sub-school-building-others')">Others</option>
+                        </select>
+                        <div class="mt-4 hidden" id="sub-school-building-others">
+                            <input type="text" placeholder="Please provide name for property type" class="mt-2 w-full p-2 rounded text-center font-serif" name="sub_school_type">
+                        </div>
+                    
+                    
+                        <div class="mt-4">
+                            <label>No of classrooms</label>
+                            <input type="number" min="0" step="1" value="0"  class="border rounded-md w-full p-2 text-center font-serif" name="no_of_classrooms">
+                        </div>
+                        <div class="mt-4">
+                            <label>No of bathrooms</label>
+                            <input type="number" min="0" step="1" value="0"  class="border rounded-md w-full p-2 text-center font-serif" name="no_of_bathrooms">
+                        </div>
+                        <div class="mt-4">
+                            <label>How is the student enrollment trend over the past three (3) years?</label>
+                            <textarea name="student_enrollment_trend" id="" cols="30" rows="10" placeholder="Please be straight to the point and honest, thank you!" class="border rounded-md w-full p-2 text-xs font-serif"></textarea>
+                        </div>
+                        <div class="mt-4">
+                            <label>Can you share information on the academic performance and accreditation status?</label>
+                            <textarea name="academic_performance_and_accreditation_status" id="" cols="30" rows="10" placeholder="Please be straight to the point and honest, thank you!" class="border rounded-md w-full p-2 text-xs font-serif"></textarea>
+                        </div>
+
+                        <div class="mt-4">
+                            <label>Are there backup power systems such generator or solar system?</label>
+                            <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="backup_power_system">
+                                <option onclick="hideQuestMoreInfo('school-backup-power-system')" selected></option>
+                                <option onclick="showQuestMoreInfo('school-backup-power-system')">Yes</option>
+                                <option onclick="hideQuestMoreInfo('school-backup-power-system')">No</option>
+                                <option onclick="hideQuestMoreInfo('school-backup-power-system')">Not aware</option>
+                            </select>
+                            <div class="mt-4 hidden" id="school-backup-power-system">
+                                <label>If Yes, please explain how this has benn sustained and maintained</label>
+                                <textarea name="backup_power_system_more_info" id="" cols="30" rows="10" placeholder="Please be straight to the point and honest, thank you!" class="border rounded-md w-full p-2 text-xs font-serif"></textarea>
+                            </div>
+                        </div>
+
+                        <p class="mt-4">Please tick the available amenities</p>
+                        <div class="p-6 mt-2 bg-white shadow-sm block gap-4 md:flex">
+                        
+                            <div class="block gap-2">
+                                <div>
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Standard Classrooms</label>
+                                </div>
+                                <div>
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Administrative Facilities</label>
+                                </div>
+                                <div>
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Medical Facilities</label>
+                                </div>
+                                <div>                               
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Security Surveillance</label>
+                                </div>
+                                <div>                               
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Recreational Areas</label>
+                                </div>
+                                <div>                               
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Transportation</label>
+                                </div>
+                            </div>
+                            <div class="block gap-2">
+                                <div>
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Standard Field</label>
+                                </div>
+                                <div>
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Basketball Court</label>
+                                </div>
+                                <div>
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">School Hall</label>
+                                </div>
+                                <div>                               
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Laboratory</label>
+                                </div>
+                                <div>                               
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Library</label>
+                                </div>
+                                <div>                               
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Cafeteria</label>
+                                </div>
+                            </div>
+                            <div class="block gap-2">
+                                <div>
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Research Facilities</label>
+                                </div>
+                                <div>
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Indoor Sport Centers</label>
+                                </div>
+                                <div>
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Cultural and Art Spaces</label>
+                                </div>
+                                <div>                               
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Hostels</label>
+                                </div>
+                                <div>                               
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Parking Space</label>
+                                </div>
+                                <div>                               
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Power Backup</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div> 
+                    
+                    
+                    
+                    <!-- Sub Medical Building Details Section -->
+                    <div class="mt-4 p-2 shadow-md border mb-4 font-serif hidden" id="sub-medical-building">
+
+                        <p>Select the type of Medical Building</p>
+                        <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="sub_medical_building_type" required>
+                            <option onclick="hideQuestMoreInfo('sub-medical-building-others')" selected></option>
+                            <option onclick="hideQuestMoreInfo('sub-medical-building-others')">A Clinic</option>
+                            <option onclick="hideQuestMoreInfo('sub-medical-building-others')">A Pediatric Hospital</option>
+                            <option onclick="hideQuestMoreInfo('sub-medical-building-others')">A Psychiatry</option>
+                            <option onclick="hideQuestMoreInfo('sub-medical-building-others')">A Radiology</option>
+                            <option onclick="hideQuestMoreInfo('sub-medical-building-others')">A Dermatology Clinic</option>
+                            <option onclick="hideQuestMoreInfo('sub-medical-building-others')">A Pharmacy</option>
+                            <option onclick="hideQuestMoreInfo('sub-medical-building-others')">A Mental Health Clinic</option>
+                            <option onclick="hideQuestMoreInfo('sub-medical-building-others')">An Optometry Clinic</option>
+                            <option onclick="hideQuestMoreInfo('sub-medical-building-others')">A Rehabilitation Center</option>
+                            <option onclick="hideQuestMoreInfo('sub-medical-building-others')">An Ambulatory Surgery Center</option>
+                            <option onclick="hideQuestMoreInfo('sub-medical-building-others')">A Maternity Clinic</option>
+                            <option onclick="showQuestMoreInfo('sub-medical-building-others')">Others</option>
+                        </select>
+                        <div class="mt-4 hidden" id="sub-medical-building-others">
+                            <input type="text" placeholder="Please provide name for property type" class="mt-2 w-full p-2 rounded text-center font-serif" name="sub_medical_building_type">
+                        </div>
+                    
+                    
+                        <div class="mt-4">
+                            <label>No of patient bedspace</label>
+                            <input type="number" min="0" step="1" value="0"  class="border rounded-md w-full p-2 text-center font-serif" name="no_of_patient_bedspace">
+                        </div>
+
+                        <div class="mt-4">
+                            <label>How accessible is the building for patients and emergency services?</label>
+                            <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="property_accessibility">
+                                <option selected></option>
+                                <option>Very easy drive in and out.</option>
+                                <option>Not very easy drive in and out.</option>
+                                <option>Not aware</option>
+                            </select>
+                        </div>
+
+                        <div class="mt-4" id="">
+                            <p>How is the demand for medical serivices in the area?</p>
+                            <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="medical_services_demand" required>
+                                <option selected></option>
+                                <option>Very High - More 500 patients a year.</option>
+                                <option>High - less than 500 patients a year.</option>
+                                <option>Low - less than 60 patients a year.</option>
+                            </select>
+                            <div class="mt-4">
+                                <label>If there is more information about medical serivices in the area please provide.</label>
+                                <textarea name="medical_services_demand_more_info" id="" cols="30" rows="10" placeholder="Please be straight to the point and honest, thank you!" class="border rounded-md w-full p-2 text-xs font-serif"></textarea>
+                            </div>
+                        </div>
+                
+                        <div class="mt-4">
+                            <label>Is there an option to retain existing medical staff?</label>
+                            <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="retain_existing_medical_staff" required>
+                                <option onclick="hideQuestMoreInfo('existing-medical-staff')" selected></option>
+                                <option onclick="showQuestMoreInfo('existing-medical-staff')">Yes</option>
+                                <option onclick="hideQuestMoreInfo('existing-medical-staff')">No</option>
+                                <option onclick="hideQuestMoreInfo('existing-medical-staff')">Not aware</option>
+                            </select>
+                            <div class="mt-4 hidden" id="existing-medical-staff">
+                                <label>If Yes, what are the conditions?</label>
+                                <textarea name="retain_existing_medical_staff_more_info" id="" cols="30" rows="10" placeholder="Please be straight to the point and honest, thank you!" class="border rounded-md w-full p-2 text-xs font-serif" required></textarea>
+                            </div>
+                        </div>
+
+                        <div class="mt-4">
+                            <label>Are there backup power systems such generator or solar?</label>
+                            <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="backup_power_system">
+                                <option onclick="hideQuestMoreInfo('medical-backup-power-system')" selected></option>
+                                <option onclick="showQuestMoreInfo('medical-backup-power-system')">Yes</option>
+                                <option onclick="hideQuestMoreInfo('medical-backup-power-system')">No</option>
+                                <option onclick="hideQuestMoreInfo('medical-backup-power-system')">Not aware</option>
+                            </select>
+                            <div class="mt-4 hidden" id="medical-backup-power-system">
+                                <label>If Yes, please explain how this has benn sustained and maintained</label>
+                                <textarea name="backup_power_system_more_info" id="" cols="30" rows="10" placeholder="Please be straight to the point and honest, thank you!" class="border rounded-md w-full p-2 text-xs font-serif"></textarea>
+                            </div>
+                        </div>
+
+                        <div class="mt-4" id="">
+                            <label>How are the healthcare needs of the local population cater for?</label>
+                            <textarea name="" id="" cols="30" rows="10" placeholder="Please be straight to the point and honest, thank you!" class="border rounded-md w-full p-2 text-xs font-serif"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <label>How is the security situation in the area?</label>
+                        <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="property_area_security_status">
+                            <option selected></option>
+                            <option>Very reliable</option>
+                            <option>Not very relaible</option>
+                            <option>Requires extra security measures</option>
+                            <option>Not aware</option>
+                        </select>
+                    </div>
+
+                    <div class="mt-4">
+                        <label>Are their outstanding taxes?</label>
+                        <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="">
+                            <option onclick="hideQuestMoreInfo('medical-outstanding-taxes')" selected></option>
+                            <option onclick="showQuestMoreInfo('medical-outstanding-taxes')">Yes</option>
+                            <option onclick="hideQuestMoreInfo('medical-outstanding-taxes')">No</option>
+                            <option onclick="hideQuestMoreInfo('medical-outstanding-taxes')">Not aware</option>
+                        </select>
+                        <div class="mt-4 hidden" id="medical-outstanding-taxes">
+                            <label>If Yes, please provide more information</label>
+                            <textarea name="" id="" cols="30" rows="10" placeholder="Please be straight to the point and honest, thank you!" class="border rounded-md w-full p-2 text-xs font-serif"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <label>Are there outstanding repairs needed to be addressed?</label>
+                        <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="sub_commercial_property_type">
+                            <option onclick="hideQuestMoreInfo('medical-outstanding-issues-repairs')" selected></option>
+                            <option onclick="showQuestMoreInfo('medical-outstanding-issues-repairs')">Yes</option>
+                            <option onclick="hideQuestMoreInfo('medical-outstanding-issues-repairs')">No</option>
+                            <option onclick="hideQuestMoreInfo('medical-outstanding-issues-repairs')">Not aware</option>
+                        </select>
+                        <div class="mt-4 hidden" id="medical-outstanding-issues-repairs">
+                            <label>If Yes, please provide more information</label>
+                            <textarea name="" id="" cols="30" rows="10" placeholder="Please be straight to the point and honest, thank you!" class="border rounded-md w-full p-2 text-xs font-serif"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="mt-4">
+                        <label>Are there any planned developments or zoning changes in the vicinity?</label>
+                        <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="">
+                            <option onclick="hideQuestMoreInfo('school-zoning-development')" selected></option>
+                            <option onclick="showQuestMoreInfo('school-zoning-development')">Yes</option>
+                            <option onclick="hideQuestMoreInfo('school-zoning-development')">No</option>
+                            <option onclick="hideQuestMoreInfo('school-zoning-development')">Not aware</option>
+                        </select>
+                        <div class="mt-4 hidden" id="school-zoning-development">
+                            <label>If Yes, please provide more information</label>
+                            <textarea name="" id="" cols="30" rows="10" placeholder="Please be straight to the point and honest, thank you!" class="border rounded-md w-full p-2 text-xs font-serif"></textarea>
+                        </div>
+                    </div>
+                </div> 
+                
+                <!-- LAND more detailas section -->
+                <div class="p-2 shadow-md border font-serif hidden" id="land-more-details">
+                    <div class="m-4">
+                        <label>Land size by square-foot</label>
+                        <input type="number" min="0" step="1" value="0"  class="w-full p-2 rounded text-center font-serif" name="land_size">
+                    </div>
+                    <div class="m-4">
+                        <label>Land size by plot</label>
+                        <input type="number" min="0" step="1" value="0"  class="w-full p-2 rounded text-center font-serif" name="land_size">
+                    </div>
+
+                    <div class="mt-4">
+                        <label>How is the security situation in the area?</label>
+                        <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="property_area_security_status">
+                            <option selected></option>
+                            <option>Very reliable</option>
+                            <option>Not very relaible</option>
+                            <option>Requires extra security measures</option>
+                            <option>Not aware</option>
+                        </select>
+                    </div>
+                    <div class="mt-4">
+                        <label>How accessible is the land for vehicles and pedestrians?</label>
+                        <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="property_accessibility">
+                            <option selected></option>
+                            <option>Very easy drive in and out.</option>
+                            <option>Not very easy drive in and out.</option>
+                            <option>Not aware</option>
+                        </select>
+                    </div>
+                    <div class="mt-4">
+                        <label>Is there any religious building closeby?</label>
+                        <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="religious_building_clsoeby" required>
+                            <option onclick="hideQuestMoreInfo('religious-building-closeby-type')" selected></option>
+                            <option onclick="showQuestMoreInfo('religious-building-closeby-type')">Yes</option>
+                            <option onclick="hideQuestMoreInfo('religious-building-closeby-type')">No</option>
+                            <option onclick="hideQuestMoreInfo('religious-building-closeby-type')">Not aware</option>
+                        </select>
+                        <div class="mt-4 hidden" id="religious-building-closeby-type">
+                            <label>If Yes, please select type of religious building(s)</label>
+                            <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="religious_building_clsoeby_type" required>
+                                <option selected></option>
+                                <option>Church</option>
+                                <option>Mosque</option>
+                                <option>Shrine/Temple</option>
+                                <option>Church and Mosque</option>
+                                <option>Church, Mosque and Shrine/Temple</option>
+                                <option>Church and Shrine/Temple</option>
+                                <option>Mosque and Shrine/Temple</option>
+                            </select>    
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <label>Are there restrictions or association rules to be aware of?</label>
+                        <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="restrictions_association_rules">
+                            <option onclick="hideQuestMoreInfo('land-restrictions-association')" selected></option>
+                            <option onclick="showQuestMoreInfo('land-restrictions-association')">Yes</option>
+                            <option onclick="hideQuestMoreInfo('land-restrictions-association')">No</option>
+                            <option onclick="hideQuestMoreInfo('land-restrictions-association')">Not aware</option>
+                        </select>
+                        <div class="mt-4 hidden" id="land-restrictions-association">
+                            <label>If Yes, please provide more information</label>
+                            <textarea name="restrictions_association_rules_more_info" id="" cols="30" rows="10" placeholder="Be straight to the point and honest, thank you!" class="border rounded-md w-full p-2 text-xs font-serif"></textarea>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <label>How is the internet connectivity in the area?</label>
+                        <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="property_area_internet_connectivity">
+                            <option selected></option>
+                            <option>Very reliable</option>
+                            <option>Not very relaible</option>
+                            <option>Require extra connectivity measure</option>
+                            <option>Not aware</option>
+                        </select>
+                    </div>
+
+                    <div class="mt-4">
+                        <label>Closest Landmark</label>
+                        <input type="text" placeholder="A popular school, market, hospital or popular infrastructure that's closeby" class="border rounded-md w-full p-2 text-center text-xs font-serif" name="land_size">
+                    </div>
+                    <div class="mt-4">
+                        <label>Please select the amenities and infrastructures closeby or in the neighborhood.</label>
+                        <div class="mt-1 block md:flex gap-4 bg-white p-3 shadow-sm ">
+                            <div class="block gap-2 p-2 border border-orange-600">
+                                <div>
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">School</label>
+                                </div>
+                                <div>
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Hospital</label>
+                                </div>
+                                <div>                               
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Market/Supermarket</label>
+                                </div>
+                                <div>                               
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Police Station</label>
+                                </div>
+                                <div>                               
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Fire Station</label>
+                                </div>
+                            </div>
+    
+                            <div class="block gap-2 p-2 border border-orange-600">
+                                <div>
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">School</label>
+                                </div>
+                                <div>
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Hospital</label>
+                                </div>
+                                <div>                               
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Market/Supermarket</label>
+                                </div>
+                                <div>                               
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Police Station</label>
+                                </div>
+                                <div>                               
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Fire Station</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="p-6 mt-4 bg-white shadow-sm">
+                        <p class="mb-2">Available Document</p>
+                        <div class="block gap-2">
+                            <div>
+                                <input type="checkbox" name="land_document"><label for="land_document" class="ml-4">Certificate of ownership</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" name="land_document"><label for="land_document" class="ml-4">Deed of Agreement</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" name="land_document"><label for="land_document" class="ml-4">Deed of Conveyance</label>
+                            </div>
+                            <div>                               
+                                <input type="checkbox" name="land_document"><label for="land_document" class="ml-4">Survey</label>
+                            </div>
+                            <div>                               
+                                <input type="checkbox" name="land_document"><label for="land_document" class="ml-4">Others</label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- More information about PROPERTY Physical Buildings -->
+                <div class="p-2 shadow-md border mb-4 font-serif hidden" id="more-details-property">
+
+                    <div class="font-serif">
+                        <p >Property Status</p>
+                        <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="">
+                            <option selected></option>
+                            <option>Renovated</option>
+                            <option>New</option>
+                            <option>Old</option>
+                        </select>
+                    </div>
+
+                    <div class="mt-4">
+                        <label>Closest Landmark</label>
+                        <input type="text" placeholder="A popular school, market, hospital or popular infrastructure that's closeby" class="border rounded-md w-full p-2 text-center text-xs font-serif" name="">
+                    </div>
+                    <div class="mt-4">
+                        <label>Please select the amenities and infrastructures closeby or in the neighborhood.</label>
+                        <div class="mt-1 block md:flex gap-4 bg-white p-3 shadow-sm ">
+                            <div class="block gap-2 p-2 border border-orange-600">
+                                <div>
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">School</label>
+                                </div>
+                                <div>
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Hospital</label>
+                                </div>
+                                <div>                               
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Market/Supermarket</label>
+                                </div>
+                                <div>                               
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Police Station</label>
+                                </div>
+                                <div>                               
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Fire Station</label>
+                                </div>
+                            </div>
+    
+                            <div class="block gap-2 p-2 border border-orange-600">
+                                <div>
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">School</label>
+                                </div>
+                                <div>
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Hospital</label>
+                                </div>
+                                <div>                               
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Market/Supermarket</label>
+                                </div>
+                                <div>                               
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Police Station</label>
+                                </div>
+                                <div>                               
+                                    <input type="checkbox" name="available_amenities"><label for="available_amenities" class="ml-4">Fire Station</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <label>How is the security situation in the area?</label>
+                        <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="property_area_security_status" required>
+                            <option selected></option>
+                            <option>Very reliable</option>
+                            <option>Not very relaible</option>
+                            <option>Requires extra security measures</option>
+                            <option>Not aware</option>
+                        </select>
+                    </div>
+                    <div class="mt-4">
+                        <label>Is there any religious building closeby?</label>
+                        <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="religious_building_clsoeby" required>
+                            <option onclick="hideQuestMoreInfo('religious-building-closeby-type')" selected></option>
+                            <option onclick="showQuestMoreInfo('religious-building-closeby-type')">Yes</option>
+                            <option onclick="hideQuestMoreInfo('religious-building-closeby-type')">No</option>
+                            <option onclick="hideQuestMoreInfo('religious-building-closeby-type')">Not aware</option>
+                        </select>
+                        <div class="mt-4 hidden" id="religious-building-closeby-type">
+                            <label>If Yes, please select type of religious building(s)</label>
+                            <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="religious_building_clsoeby_type" required>
+                                <option selected></option>
+                                <option>Church</option>
+                                <option>Mosque</option>
+                                <option>Shrine/Temple</option>
+                                <option>Church and Mosque</option>
+                                <option>Church, Mosque and Shrine/Temple</option>
+                                <option>Church and Shrine/Temple</option>
+                                <option>Mosque and Shrine/Temple</option>
+                            </select>    
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <label>Are there restrictions or association rules to be aware of?</label>
+                        <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="restrictions_association_rules">
+                            <option onclick="hideQuestMoreInfo('homeowner-association-rules')" selected></option>
+                            <option onclick="showQuestMoreInfo('homeowner-association-rules')">Yes</option>
+                            <option onclick="hideQuestMoreInfo('homeowner-association-rules')">No</option>
+                            <option onclick="hideQuestMoreInfo('homeowner-association-rules')">Not aware</option>
+                        </select>
+                        <div class="mt-4 hidden" id="homeowner-association-rules">
+                            <label>If Yes, please provide more information</label>
+                            <textarea name="restrictions_association_rules_more_info" id="" cols="30" rows="10" placeholder="Be straight to the point and honest, thank you!" class="border rounded-md w-full p-2 text-xs font-serif"></textarea>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <label>Are their outstanding issues to be attended or repairs needed?</label>
+                        <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="outstanding_issues_and_repair">
+                            <option onclick="hideQuestMoreInfo('outstanding-issues-repairs')" selected></option>
+                            <option onclick="showQuestMoreInfo('outstanding-issues-repairs')">Yes</option>
+                            <option onclick="hideQuestMoreInfo('outstanding-issues-repairs')">No</option>
+                            <option onclick="hideQuestMoreInfo('outstanding-issues-repairs')">Not aware</option>
+                        </select>
+                        <div class="mt-4 hidden" id="outstanding-issues-repairs">
+                            <label>If Yes, please provide more information</label>
+                            <textarea name="outstanding_issues_and_repair_more_info" id="" cols="30" rows="10" placeholder="Be straight to the point and honest, thank you!" class="border rounded-md w-full p-2 text-xs font-serif"></textarea>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <label>Are there any recurrent costs attached to the property?</label>
+                        <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="property_recuurent_costs">
+                            <option onclick="hideQuestMoreInfo('recurrent-costs')" selected></option>
+                            <option onclick="showQuestMoreInfo('recurrent-costs')">Yes</option>
+                            <option onclick="hideQuestMoreInfo('recurrent-costs')">No</option>
+                            <option onclick="hideQuestMoreInfo('recurrent-costs')">Not aware</option>
+                        </select>
+                        <div class="mt-4 hidden" id="recurrent-costs">
+                            <label>If Yes, please provide more information</label>
+                            <textarea name="property_recuurent_costs_more_info" id="" cols="30" rows="10" placeholder="Be straight to the point and honest, thank you!" class="border rounded-md w-full p-2 text-xs font-serif"></textarea>
+                        </div>
+                    </div>
+                    <div class="mt-4">
+                        <label>How is the internet connectivity in the area?</label>
+                        <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="property_area_internet_connectivity">
+                            <option selected></option>
+                            <option>Very reliable</option>
+                            <option>Not very relaible</option>
+                            <option>Require extra connectivity measure</option>
+                            <option>Not aware</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mt-4">
+                        <label>Year property was developed</label>
+                        <input type="number" min="0" step="1" max="1900" value="1900"  class="border rounded-md w-full p-2 text-center font-serif" name="year_developed">
+                    </div>
+                    <div class="mt-4">
+                        <label>Property size by square-foot</label>
+                        <input type="number" min="0" step="1" value="0"  class="border rounded-md w-full p-2 text-center font-serif" name="size_of_property_by_square_footage">
+                    </div>
+                    <div class="mt-4">
+                        <label>Property size by plot</label>
+                        <input type="number" min="0" step="1" value="0"  class="border rounded-md w-full p-2 text-center font-serif" name="size_of_property_by_plot">
+                    </div>
+                                 
+                </div>
+
+                <div class="p-2 shadow-md border mb-4 font-serif hidden" id="no-of-rooms">
+                    <div class="mt-4">
+                        <label>No of livingrooms</label>
+                        <input type="number" min="0" step="1" value="0"  class="border rounded-md w-full p-2 text-center font-serif" name="">
+                    </div>
+                    <div class="mt-4">
+                        <label>No of bedrooms</label>
+                        <input type="number" min="0" step="1" value="0"  class="border rounded-md w-full p-2 text-center font-serif" name="">
+                    </div>
+                    <div class="mt-4">
+                        <label>No of bathrooms</label>
+                        <input type="number" min="0" step="1" value="0"  class="border rounded-md w-full p-2 text-center font-serif" name="">
+                    </div>
+                    <div class="mt-4">
+                        <label>No of kitchen</label>
+                        <input type="number" min="0" step="1" value="0"  class="border rounded-md w-full p-2 text-center font-serif" name="">
+                    </div>
+                </div>   
+
+                {% if for_sale == 'No' %}
+                <div class="shadow-md border mb-4 font-serif mt-2 p-4 hidden" id="to-let-available-amenities">
+                    <div class="mt-4">
+                        <p>Is bathroom available?</p>
+                        <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="bathroom_is_available">
+                            <option selected></option>
+                            <option>Yes</option>
+                            <option>No</option>
+                        </select>
+                    </div>
+
+                    <div class="mt-4">
+                        <p>Is toilet available?<p>
+                        <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="toilet_is_available">
+                            <option selected></option>
+                            <option>Yes</option>
+                            <option>No</option>
+                        </select>
+                    </div>
+
+                    <div class="mt-4">
+                        <p>Is water is available?</p>
+                        <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="water_is_available">
+                            <option selected></option>
+                            <option>Yes</option>
+                            <option>No</option>
+                        </select>
+                    </div>
+
+                    <div class="mt-4">
+                        <p>Is there good power supply?</p>
+                        <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="good_power_supply">
+                            <option selected></option>
+                            <option>Yes</option>
+                            <option>No</option>
+                        </select>
+                    </div>
+
+                    <div class="mt-4">
+                        <p >Is owner living in property?</p>
+                        <select class="p-3 mt-1 text-sm text-center bg-white w-full rounded-md border" name="owner_lives_in_property">
+                            <option selected></option>
+                            <option>Yes</option>
+                            <option>No</option>
+                        </select>
+                    </div>
+
+                    <div class="mt-4 flex">
+                        <label for="" class="mr-2"> <p>Please tick the box if this property is available for lease</p></label>
+                       <input type="checkbox" name="is_available_for_lease">
+                    </div>
+                </div>
+                {% endif %}
+                
+
+                <div class="mt-5 shadow-md border mb-4 font-serif p-4 font-thin">
+                    {{ form | crispy }}
+                    
+                    <div class="mt-4 flex">
+                        <label for="" class="mr-2"> <p>Please tick the box if this property is negotiable</p></label>
+                       <input type="checkbox" name="">
+                    </div>
+                </div>
+
+                <div>
+                    <h2>Select a State:</h2>
+                    <select id="stateSelect" name="state" onchange="populateSenatorialDistrictsAndLGAs()">
+                        <option value="">Select a State</option>
+                        <!-- Add options dynamically using JavaScript -->
+                    </select>
+
+                    <h2>Senatorial Districts:</h2>
+                    <select id="senatorialDistrictSelect" name="senatorial_district"></select>
+
+                    <h2>LGAs:</h2>
+                    <select id="lgaSelect" name="local_government"></select>
+                </div>
+
                 <div class="justify-center items-center p-4 border my-3 w-1/2">
-                    <div class="text-xs text-red-700">
+                    <div class="text-xs text-white">
                         <p>Kindly attach clear images to your property.</p>
                         <p>You cannot upload more than 12 images.</p>
                         <p>Each image cannot be more than 1MB in size.</p>
@@ -62,7 +765,7 @@
                     </div>
                </div>
                 <div class="flex justify-center items-center py-5">
-                    <button type="submit" class="bg-purple-700 hover:bg-orange-600 border border-orange-600 rounded-md text-white text-sm px-4 py-1">
+                    <button type="submit" class="bg-purple-950 hover:bg-purple-500 border-2 border-white rounded-md px-4 py-1">
                         <svg xmlns="http://www.w3.org/2000/svg" height="30" viewBox="0 -960 960 960" width="30" fill="#ffffff">
                             <path d="M440-160v-326L336-382l-56-58 200-200 200 200-56 58-104-104v326h-80ZM160-600v-120q0-33 23.5-56.5T240-800h480q33 0 56.5 23.5T800-720v120h-80v-120H240v120h-80Z"/>
                         </svg>

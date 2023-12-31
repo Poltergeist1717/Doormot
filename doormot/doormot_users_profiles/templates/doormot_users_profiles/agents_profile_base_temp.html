@@ -6,6 +6,7 @@
     <meta charset="utf-8">
     
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://cdn.jsdelivr.net/npm/smoothscroll-polyfill@0.6.1/dist/smoothscroll.mi.js"></script>
     <link rel="stylesheet" href="{% static 'doormot_app/generated.css' %}">
     <script src="{% static 'doormot_app/base_main.js' %}"></script>
 
@@ -22,9 +23,9 @@
 
     {% block top-section %}
       <div class="w-screen h-auto">
-        <div class="bg-slate-600 w-screen py-10 grid grid-cols-2 border shadow-sm">
+        <div class="bg-white/60 w-screen py-10 grid grid-cols-2 border shadow-sm">
           <div class="px-3 py-1 m-2 col-span-1">
-              <div class="font-serif py-2 m-2 font-extrabold text-purple-950 text-center text-smrounded-lg">
+              <div class="font-serif py-2 m-2 font-extrabold text-orange-600 text-center text-smrounded-lg">
                   <h3>Welcome Back<br><span class="">{{ user.username }}</span></h3>
               </div>
           </div>
@@ -48,7 +49,7 @@
 
         <!----logo Section-->
         <div class="px-3">
-          <div class="text-xl font-extrabold text-orange-600">
+          <div class="text-lg md:text-xl font-extrabold text-orange-600">
             <span><a href="{% url 'doormot-home' %}">Doormot</a></span>
           </div>
         </div>
@@ -57,7 +58,7 @@
         <div class="m-1 block md:flex justify-between" id="content-box">
 
           <div class="m-1">
-            <ul class="block sm:hidden md:flex space-x-5 text-white" id="navlist">
+            <ul class="hidden md:flex space-x-5 text-white" id="navlist">
               {% block navlist %}
               <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-home' %}">HOME</a></li>
               <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-about' %}">ABOUT US</a></li>
@@ -70,7 +71,7 @@
   
           <!----log menu section-->
           <div class="md:mx-11">
-            <ul class="blcok sm:hidden md:flex space-x-4 text-white text-xs" id="log-nav-list">
+            <ul class="hidden md:flex space-x-4 text-white text-xs" id="log-nav-list">
               {% block navlist-right-header %}
               {% if user.is_authenticated %}
               <button>

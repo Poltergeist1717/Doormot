@@ -103,10 +103,10 @@ class post_property(View):
         # UnboundLocalError (local variable referenced before assignment)
 
         if for_sale == "Yes":
-            name = "For Sale Property"
+            name = "Upload For Sale Property"
             form = For_Sale_Listed_Properties_Form(request.POST, request.FILES)
         elif for_sale == "No":
-            name = "To Let Property"
+            name = "Upload To Let Property"
             form = To_Let_Listed_Properties_Form(request.POST, request.FILES)
         else:
             name = "None"
@@ -127,10 +127,10 @@ class post_property(View):
             user = return_user_object(user_pk, user_type)
 
         form = To_Let_Listed_Properties_Form(request.POST, request.FILES)
-        name = "To Let Property"
+        name = "Upload To Let Property"
 
         if for_sale == "Yes":
-            name = "For Sale Property"
+            name = "Upload For Sale Property"
             form = For_Sale_Listed_Properties_Form(request.POST, request.FILES)
 
         if request.method == 'POST':
@@ -667,7 +667,6 @@ def property_more_details(request):
         
         advertisied_filtered_property_images = return_property_model_images(property_model=advertisied_filtered_property_models, for_sale=for_sale,)
         advertisied_filtered_property_first_image = advertisied_filtered_property_images.return_first_image()
-        print(f"Advertisied filtered property models first-image : {advertisied_filtered_property_first_image}")
         
         context = {
             'user':user,

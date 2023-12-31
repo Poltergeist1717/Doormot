@@ -19,42 +19,6 @@ def validate_video_size(value):
 
 
 class For_Sale_Listed_Properties(models.Model):
-    
-    PROPERTY_STATUS = [
-        ('N', 'New'),
-        ('I', 'In use'),
-        ('R', 'Renovated'),
-        ('O', 'Old'),
-        ]
-
-    OWNED_BY_STATUS = [
-        ('I', 'Individual'),
-        ('C', 'Cooperate body'),
-        ('G', 'Government'),
-        ]
-
-    PROPERTY_TYPES = [
-        ('B', 'Bungalow'),
-        ('D', 'Duplex'),
-        ('DTH', 'Detached House'),
-        ('TH', 'Terraced House'),
-        ('BF', 'Block of Flats'),
-        ('M', 'Mansion'),
-        ('SC', 'Self-contained Apartment'),
-        ('CB', 'Commercial Building'),
-        ('RE', 'Residential Estate'),
-        ]
-
-    SUB_COMMERCIAL_PROPERTY_TYPES = [
-        ('SHP', 'Shopping Complex'),
-        ('OS', 'Office Space'),
-        ('SSHPU', 'Shop Units'),
-        ('SCHL', 'School Building'),
-        ('HSPTL', 'Hospital Building'),
-        ('PTRLSTN', 'Petrol Station'),
-        ('RSTRNT', 'Restaurant Building'),
-        ]
-
 
     uploaded_by = GenericForeignKey('uploaded_by_content_type', 'uploaded_by_object_id')
     uploaded_by_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
@@ -73,14 +37,42 @@ class For_Sale_Listed_Properties(models.Model):
 
     property_id = models.CharField(max_length=50, unique=True, default=None)
 
-    owned_by = models.CharField(max_length=50, blank=False, null=False, default=None, choices=OWNED_BY_STATUS)
+    owned_by = models.CharField(max_length=50, blank=False, null=False, default=None)
 
     asking_price = models.DecimalField(max_digits=12, decimal_places=2, blank=False, null=False, default=None)
-    property_status = models.CharField(max_length=50, blank=False, null=False, default=None, choices=PROPERTY_STATUS)
-    property_type = models.CharField(max_length=50, blank=False, null=False, default=None, choices=PROPERTY_TYPES)
-    sub_commercial_property_type = models.CharField(max_length=50, blank=True, null=True, default=None, choices=SUB_COMMERCIAL_PROPERTY_TYPES)
-    no_of_bedrooms = models.PositiveIntegerField(blank=False, null=False, default=None)
+    property_status = models.CharField(max_length=50, blank=False, null=False, default=None)
+    property_type = models.CharField(max_length=50, blank=False, null=False, default=None)
 
+    sub_commercial_property_type = models.CharField(max_length=50, blank=True, null=True, default=None)
+    
+    sub_school_type = models.CharField(max_length=50, blank=True, null=True, default=None)
+    no_of_classrooms = models.PositiveIntegerField(blank=False, null=False, default=None)
+    student_enrollment_trend = models.TextField(blank=False, null=False, default=None)
+    academic_performance_and_accreditation_status = models.TextField(blank=False, null=False, default=None)  
+
+    sub_medical_building_type = models.CharField(max_length=50, blank=True, null=True, default=None)
+    no_of_patient_bedspace = models.PositiveIntegerField(blank=False, null=False, default=None)
+    current_patient_capacity = models.PositiveIntegerField(blank=False, null=False, default=None)
+    medical_services_demand = models.CharField(max_length=50, blank=False, null=False, default=None)
+    medical_services_demand_more_info = models.TextField(blank=True, null=False, default=None)
+    retain_existing_medical_staff = models.CharField(max_length=50, blank=False, null=False, default=None)
+    retain_existing_medical_staff_more_info = models.TextField(blank=True, null=False, default=None)
+
+    backup_power_system = models.CharField(max_length=50, blank=False, null=False, default=None)
+    backup_power_system_more_info = models.TextField(blank=True, null=False, default=None)
+    property_accessibility = models.CharField(max_length=50, blank=False, null=False, default=None)
+    property_area_security_status = models.CharField(max_length=50, blank=False, null=False, default=None)
+    religious_building_clsoeby = models.CharField(max_length=50, blank=False, null=False, default=None)
+    religious_building_clsoeby_type = models.CharField(max_length=50, blank=False, null=False, default=None)
+    restrictions_association_rules = models.CharField(max_length=50, blank=False, null=False, default=None)
+    restrictions_association_rules_more_info = models.TextField(blank=False, null=False, default=None)
+    outstanding_issues_and_repair = models.CharField(max_length=50, blank=False, null=False, default=None)
+    outstanding_issues_and_repair_more_info = models.TextField(blank=True, null=False, default=None)
+    property_recuurent_costs = models.CharField(max_length=50, blank=False, null=False, default=None)
+    property_recuurent_costs_more_info = models.TextField(blank=True, null=False, default=None)
+    property_area_internet_connectivity = models.CharField(max_length=50, blank=False, null=False, default=None)
+      
+    no_of_bedrooms = models.PositiveIntegerField(blank=False, null=False, default=None)
     no_of_livingrooms = models.PositiveIntegerField(blank=False, null=False, default=None)
     no_of_bathrooms = models.PositiveIntegerField(blank=False, null=False, default=None)
     no_of_kitchens = models.PositiveIntegerField(blank=False, null=False, default=None)
@@ -90,11 +82,13 @@ class For_Sale_Listed_Properties(models.Model):
     address = models.CharField(max_length=255, blank=False, null=False, default=None)
     city = models.CharField(max_length=100, blank=False, null=False, default=None)
     state = models.CharField(max_length=100, blank=False, null=False, default=None)
-    zip_code = models.CharField(max_length=20, blank=True, null=True, default=None)
+    zip_code = models.PositiveIntegerField(blank=False, null=False, default=None)
     local_government = models.CharField(max_length=20, blank=False, null=False, default=None)
 
+    available_amenities = models.ManyToManyField('self', blank=True)
+
     date_time_of_upload = models.DateTimeField(auto_now_add=True)
-    year_developed = models.DateField(blank=False, null=False, default=None)
+    year_developed = models.PositiveIntegerField(blank=False, null=False, default=None)
 
     date_time_of_sale = models.DateTimeField(null=True, default=None)
 
@@ -121,46 +115,6 @@ class For_Sale_Properties_Images(models.Model):
 
 
 class To_Let_Listed_Properties(models.Model):
-    
-    PROPERTY_STATUS = [
-        ('N', 'New'),
-        ('R', 'Renovated'),
-        ('O', 'Old'),
-        ]
-
-    OWNED_BY_STATUS = [
-        ('I', 'Individual'),
-        ('C', 'Cooperate body'),
-        ('G', 'Government'),
-        ]
-
-    PROPERTY_TYPES = [
-        ('B', 'Bungalow'),
-        ('D', 'Duplex'),
-        ('DT', 'Detached House'),
-        ('T', 'Terraced House'),
-        ('BF', 'Block of Flats'),
-        ('M', 'Mansion'),
-        ('SC', 'Self-contained Apartment'),
-        ('CB', 'Commercial Building'),
-        ('RE', 'Residential Estate'),
-        ]
-
-    SUB_COMMERCIAL_PROPERTY_TYPES = [
-        ('SHP', 'Shopping Complex'),
-        ('OS', 'Office Space'),
-        ('SSHPU', 'Shop Units'),
-        ('SCHL', 'School Building'),
-        ('HSPTL', 'Hospital Building'),
-        ('PTRLSTN', 'Petrol Station'),
-        ('RSTRNT', 'Restaurant Building'),
-        ]
-    
-    AVAILABLE = [
-        ('Y', 'Yes'),
-        ('N', 'No'),
-        ]
-
 
     uploaded_by = GenericForeignKey('uploaded_by_content_type', 'uploaded_by_object_id')
     uploaded_by_content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
@@ -180,26 +134,57 @@ class To_Let_Listed_Properties(models.Model):
 
     property_id = models.CharField(max_length=50, unique=True, default=None)
 
-    owned_by = models.CharField(max_length=50, blank=False, null=False, default=None, choices=OWNED_BY_STATUS)
+    owned_by = models.CharField(max_length=50, blank=False, null=False, default=None)
 
     rent_price = models.DecimalField(max_digits=10, decimal_places=2)
-    property_status = models.CharField(max_length=50, choices=PROPERTY_STATUS)
-    property_type = models.CharField(max_length=50, choices=PROPERTY_TYPES)
-    sub_commercial_property_type = models.CharField(max_length=50, blank=True, null=True, default=None, choices=SUB_COMMERCIAL_PROPERTY_TYPES)
+    property_status = models.CharField(max_length=50)
+    property_type = models.CharField(max_length=50)
+
+    sub_commercial_property_type = models.CharField(max_length=50, blank=True, null=True, default=None)
+
+    sub_school_type = models.CharField(max_length=50, blank=True, null=True, default=None)
+    no_of_classrooms = models.PositiveIntegerField(blank=False, null=False, default=None)
+    student_enrollment_trend = models.TextField(blank=False, null=False, default=None)
+    academic_performance_and_accreditation_status = models.TextField(blank=False, null=False, default=None)  
+
+    sub_medical_building_type = models.CharField(max_length=50, blank=True, null=True, default=None)
+    no_of_patient_bedspace = models.PositiveIntegerField(blank=False, null=False, default=None)
+    current_patient_capacity = models.PositiveIntegerField(blank=False, null=False, default=None)
+    medical_services_demand = models.CharField(max_length=50, blank=False, null=False, default=None)
+    medical_services_demand_more_info = models.TextField(blank=True, null=False, default=None)
+    retain_existing_medical_staff = models.CharField(max_length=50, blank=False, null=False, default=None)
+    retain_existing_medical_staff_more_info = models.TextField(blank=True, null=False, default=None)
+
+    backup_power_system = models.CharField(max_length=50, blank=False, null=False, default=None)
+    backup_power_system_more_info = models.TextField(blank=True, null=False, default=None)
+    property_accessibility = models.CharField(max_length=50, blank=False, null=False, default=None)
+    property_area_security_status = models.CharField(max_length=50, blank=False, null=False, default=None)
+    religious_building_clsoeby = models.CharField(max_length=50, blank=False, null=False, default=None)
+    religious_building_clsoeby_type = models.CharField(max_length=50, blank=False, null=False, default=None)
+    restrictions_association_rules = models.CharField(max_length=50, blank=False, null=False, default=None)
+    restrictions_association_rules_more_info = models.TextField(blank=False, null=False, default=None)
+    outstanding_issues_and_repair = models.CharField(max_length=50, blank=False, null=False, default=None)
+    outstanding_issues_and_repair_more_info = models.TextField(blank=True, null=False, default=None)
+    property_recuurent_costs = models.CharField(max_length=50, blank=False, null=False, default=None)
+    property_recuurent_costs_more_info = models.TextField(blank=True, null=False, default=None)
+    property_area_internet_connectivity = models.CharField(max_length=50, blank=False, null=False, default=None)
     
-    bathroom_is_available = models.CharField(max_length=50, blank=False, null=False, default=None, choices=AVAILABLE)
-    toilet_is_available = models.CharField(max_length=50, blank=False, null=False, default=None, choices=AVAILABLE)
-    water_is_available = models.CharField(max_length=50, blank=False, null=False, default=None, choices=AVAILABLE)
-    good_power_supply = models.CharField(max_length=50, blank=False, null=False, default=None, choices=AVAILABLE)
-    owner_lives_in_property = models.CharField(max_length=50, blank=False, null=False, default=None, choices=AVAILABLE)
+    bathroom_is_available = models.CharField(max_length=50, blank=False, null=False, default=None)
+    toilet_is_available = models.CharField(max_length=50, blank=False, null=False, default=None)
+    water_is_available = models.CharField(max_length=50, blank=False, null=False, default=None)
+    good_power_supply = models.CharField(max_length=50, blank=False, null=False, default=None)
+    owner_lives_in_property = models.CharField(max_length=50, blank=False, null=False, default=None)
 
     address = models.CharField(max_length=255, blank=False, null=False, default=None)
-    city = models.CharField(max_length=100,blank=False, null=False, default=None)
+    senatorial_district = models.CharField(max_length=100,blank=False, null=False, default=None)
     state = models.CharField(max_length=100, blank=False, null=False, default=None)
     zip_code = models.CharField(max_length=20)
     local_government = models.CharField(max_length=20, blank=False, null=False, default=None)
+
+    available_amenities = models.ManyToManyField('self', blank=True)
     
     date_time_of_upload = models.DateTimeField(auto_now_add=True)
+    year_developed = models.PositiveIntegerField(blank=False, null=False, default=None)
 
     is_rented = models.BooleanField(default=False)
     is_available_for_lease =  models.BooleanField(default=False)

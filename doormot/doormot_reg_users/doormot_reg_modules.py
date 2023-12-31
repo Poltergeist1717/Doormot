@@ -1,15 +1,22 @@
-# from django.utils import timezone
+from django.utils import timezone
+from datetime import timedelta
+import logging
+import random
+import string
+import secrets
+import hashlib
+import binascii
+from django.dispatch import Signal, receiver
+
 # from django.core.mail import send_mail
 # from django_otp.plugins.otp_totp.models import TOTPDevice
 # from twilio.rest import Client
 # from doormot_app.doormot_app_modules import return_user_object
-# import logging
-import random
-import string
+# import smtplib
+# from email.mine.text import MIMEText
+# from email.mine.multipart import MIMEMultipart
 
-
-
-# logger = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
 
@@ -21,22 +28,104 @@ import string
 class rand():
     def generate_random_number(self):
         return random.randint(1000, 9999)
+    try:
 
-    def generate(self):
-        alphabet = string.ascii_uppercase
-        combination = random.sample(alphabet, 4)
-        return ''.join(combination)
+        def generate(self):
+            alphabet = string.ascii_uppercase
+            combination = random.sample(alphabet, 4)
+            return ''.join(combination)
 
-    def alphanumeric(self):
-        random_number = self.generate_random_number()
-        random_alphabet = self.generate()
-        rad = f'{random_number}{random_alphabet}'
-        return rad
+        def alphanumeric(self):
+            random_number = self.generate_random_number()
+            random_alphabet = self.generate()
+            rad = f'{random_number}{random_alphabet}'
+            return rad
+    except Exception as e:
+        logger.exception("There was an error during generating random number: %s", e)
+
+# Create a custom Signal instance 
+send_signal = Signal()
+
+
+# Type: Class
+class generate_hashed_secret_code:
+    def __init__(self, token_lenght, hash_iterations):
+        self.token_lenght = token_lenght
+        self.hash_iterations = hash_iterations
+
+    try:
+        def generate_hexadeci_code(self):
+            return secrets.token_hex(self.token_lenght)
+
+        def generate_salt(self):
+            return secrets.token_bytes(16)
+
+        def hash_code(self, secret_code, salt):
+            hashed_code = hashlib.pbkdf2_hmac('sha256', secret_code.encode('utf-8'), salt, self.hash_iterations)
+            return binascii.hexlify(hashed_code).decode()
+    except Exception as e:
+        logger.exception("There was an error during hashing: %s", e)
+
+
+class locked_account_time_difference:
+    def __init__(self, start_time, lock_threshold_by_hours):
+        self.start_time = start_time
+        self.lock_threshold_by_hours = lock_threshold_by_hours
+    try:
+        def calculate_countdown(self):
+            current_date_time = timezone.now()
+
+            time_difference = current_date_time - self.start_time
+
+            target_lock_threshold = timedelta(hours=self.lock_threshold_by_hours)
+
+            if time_difference < target_lock_threshold:
+                return False
+            else:
+                return True
+
+        def calculate_countdown_remaining(self):
+            current_date_time = timezone.now()
+
+            time_difference = current_date_time - self.start_time
+
+            target_lock_threshold = timedelta(hours=self.lock_threshold_by_hours)
+
+            remaining_time = target_lock_threshold - time_difference
+
+            remaining_time = max(remaining_time, timedelta(0))
+
+            return remaining_time
+    except Exception as e:
+        logger.exception("There was an exception: %s", e)
 
 
 
+# Global receiver function for signals
+# @receiver(send_signal)
+# def send_unhashed_recovery_code_to_mail(sender, unhashed_recovery_code, **kwargs):
+#     send_mail(subject, body, receipient)
 
+# def send_mail(subject, body, receipient):
+#     smtp_server = 'smpt.gmail.com'
+#     smpt_port = 587
+#     smpt_username = 'Doormot'
+#     smpt_password = 'password'
 
+#     from_email = 'doormot@gmail.com'
+#     to_email = receipient
+
+#     message = MIMEMultipart()
+#     message['from'] = from_email
+#     message['To'] = to_email
+#     message['Subject'] = subject
+
+#     message.attach(MIMEText(body, 'plain'))
+
+#     with smtplib.SMPT(smtp_server, smpt_port) as server:
+#         server.starttls()
+#         server.login(smpt_username, smpt_password)
+#         server.sendmail(from_email, to_email, message.as_string())
 
 # class send_otp_code():
 #     self.device = TOTPDevice.objects.get(user=user, confirmed=True)

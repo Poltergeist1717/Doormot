@@ -1,0 +1,31 @@
+{% extends  "doormot_reg_users/login_base_temp.html" %}
+{% load crispy_forms_tags %}
+{% load tailwind_filters %}
+{% load static %}
+
+{% block free-section %}
+
+
+<div class="flex flex-wrap justify-center items-center md:py-10 font-popins">
+    
+    <div class="p-5 mx-5 border border-full rounded-lg shadow-md shadow-gray-800 bg-slate-200 w-1/2">
+        <legend class="py-2 my-3 text-center bg-green-700 text-white font-extrabold text-lg">Account Successfully Created!</legend>
+        {% if recovery_code_message %}
+        <div class=" text-red-700 border-red-700 border-2 text-center p-2">
+            <p>{{ recovery_code_message }}</p>
+            <p>Kindly copy the code and keep it safe.</p>
+            <p>We do not keep duplicate and we won't be able to help you recover it if you should misplace it</p>
+            <p>This is a necessary security measure</p>
+        </div>
+        {% endif %}
+        
+        <div class="p-2 mx-5 justify-center">
+            <form id="typeForm" method="get" class="p-4 m-2" action="{% url 'doormot-reg-users-login' %}">
+                <div class="flex justify-center items-center py-2">
+                    <button type="submit" class="bg-purple-700 hover:bg-orange-600 border border-orange-600 rounded-md text-white text-sm px-4 py-1">Submit Account Type</button>
+                </div>
+            </form>
+        </div>   
+    </div>
+</div>
+{% endblock free-section %}

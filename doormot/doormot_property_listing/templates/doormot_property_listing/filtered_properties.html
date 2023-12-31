@@ -274,11 +274,11 @@
         {% if filtered_property_models %} 
         <div class="px-4 flex flex-wrap mt-2">
             {% for property_model in filtered_property_models %}
-            <div class="w-1/3 md:w-1/6 bg-white px-2 py-3">
-                <div class="text-center bg-purple-950 text-white text-sm w-full h-12 overflow-hidden p-2" id="property-display-box-{{ property_model.id }}" onmouseover="displayPropertyDetailsOverlay('{{ property_model.id }}')">
+            <div class="w-1/4 md:w-1/6 px-2 py-3 transform cursor-pointer ease-in-out duration-500 backdrop-blur-sm hover:scale-[105%]">
+                <div class="text-center bg-purple-950 text-white text-xs w-full h-12 overflow-hidden p-2" id="property-display-box-{{ property_model.id }}" onmouseover="displayPropertyDetailsOverlay('{{ property_model.id }}')" onmouseout="hidePropertyDetailsOverlay('{{ property_model.id }}')">
                     <small>{{ property_model.title }}</small>
                 </div>
-                <div class="border border-full shadow-sm shadow-gray-600 overflow-hidden relative">
+                <div class="bg-white border border-full shadow-sm shadow-gray-600 overflow-hidden relative">
                     <div class="border border-full shadow-md shadow-gray-600 overflow-hidden p-2">
                         {% if for_sale == 'Yes' %}
                         {% with first_image=property_model.for_sale_properties_images_set.first %}
@@ -302,7 +302,7 @@
                         </div>                 
                         {% endif %}
                         <div class="hidden" id="property-details-overlay-{{ property_model.id }}">
-                            <div class="font-serif flex gap-4 text-sm bg-purple-950 text-white p-2 absolute inset-0 opacity-80 w-full h-full">
+                            <div class="font-serif flex gap-4 text-xs bg-purple-950 text-white p-2 absolute inset-0 opacity-80 w-full h-full" id="overlay-hider" onmouseout="hidePropertyDetailsOverlay('{{ property_model.id }}')">
                                 <div class="block">
                                     <div>
                                         <small>Property ID: {{ property_model.property_id }}</small>

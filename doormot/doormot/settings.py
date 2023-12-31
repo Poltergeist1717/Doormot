@@ -48,7 +48,10 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'doormot_app.custommiddleware.SecurityHeadersMiddleware',
+    'doormot_app.custommiddleware.ContentSecurityPolicyMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'doormot_app.custommiddleware.RateLimitMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -59,6 +62,11 @@ MIDDLEWARE = [
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
 SESSION_COOKIE_AGE = 1209600
 SESSION_SAVE_EVERY_REQUEST = True
+
+RATE_LIMIT = {
+    'requests':10,
+    'seconds':60,
+}
 
 ROOT_URLCONF = 'doormot.urls'
 
@@ -158,3 +166,11 @@ MEDIA_URL = "/media/"
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_REDIRECT_URL = 'doormot-home'
+
+# Email Configuration
+# EMAIL_BACKEND = 'django.core.email.backends.smtp.EmailBackend'
+# EMAIL_HOST = 'smtp_gmail.com'
+# EMAIL_PORT = 587
+# EMAIL_USE_TLS = True
+# EMAIL_HOST_USER = 'Doormot'
+# EMAIL_HOST_PASSWORD = 'password'

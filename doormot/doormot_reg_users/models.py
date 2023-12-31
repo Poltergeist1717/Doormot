@@ -3,8 +3,10 @@ from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, Permis
 from django.contrib.auth import validators
 from django.utils import timezone
 from django.core.exceptions import ValidationError
-from .doormot_reg_modules import rand
+from .doormot_reg_modules import rand, generate_hashed_secret_code, send_signal
 from django.contrib.contenttypes.fields import GenericRelation
+from django.db.models.signals import post_save
+
 
 
 
@@ -155,6 +157,17 @@ class Doormot_User_Individual_Owner(AbstractBaseUser, PermissionsMixin):
     false_log_count = models.PositiveIntegerField(null=True, default=None)
     currently_logged_in = models.BooleanField(null=True, default=False)
 
+    recovery_code = models.CharField(null=True, blank=True, max_length=40, default=None)
+    recovery_salt = models.CharField(null=True, blank=True, max_length=40, default=None)
+    unhashed_recovery_code = models.CharField(null=True, blank=True, max_length=40, default=None)
+    locked_account_count_down_start_time = models.DateTimeField(null=True, blank=True, default=None)
+
+    name_of_first_pet = models.CharField(null=True, blank=True, max_length=40, default=None)
+    name_of_high_school_attended = models.CharField(null=True, blank=True, max_length=40, default=None)
+    name_of_mother_place_of_birth = models.CharField(null=True, blank=True, max_length=40, default=None)
+    favorite_movie_title = models.CharField(null=True, blank=True, max_length=40, default=None)
+    last_name_of_favorite_high_school_teacher = models.CharField(null=True, blank=True, max_length=40, default=None)
+
     to_let_listings = GenericRelation('doormot_property_listing.To_Let_Listed_Properties')
     for_sale_listings = GenericRelation('doormot_property_listing.For_Sale_Listed_Properties')
 
@@ -165,6 +178,11 @@ class Doormot_User_Individual_Owner(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True)
     is_staff = models.BooleanField(default=False)
 
+    objects = CustomUserManager()
+
+    EMAIL_FIELD = 'email'
+    USERNAME_FIELD = 'username'
+
     def save(self, *args, **kwargs):
         if not self.pk:
             current_date = timezone.now().date()
@@ -172,13 +190,20 @@ class Doormot_User_Individual_Owner(AbstractBaseUser, PermissionsMixin):
             random_alphanumeric = random.alphanumeric()
             random_int = random.generate_random_number()
 
+            generate_recovery_code = generate_hashed_secret_code(token_lenght=16, hash_iterations=10000)
+            generated_unhashed_recovery_code = generate_recovery_code.generate_hexadeci_code()
+            generated_salt = generate_recovery_code.generate_salt()
+            hashed_code = generate_recovery_code.hash_code(secret_code=generated_unhashed_recovery_code, salt=generated_salt)
+
+            self.recovery_salt = generated_salt
+            self.recovery_code = hashed_code
+            self.unhashed_recovery_code = generated_unhashed_recovery_code
+
+             # Send the unhashed code signal
+            send_signal.send(sender=self.__class__, unhashed_recovery_code=generated_unhashed_recovery_code)
+
             self.user_id = f"IND/OWN/{random_int}/{random_alphanumeric}/{current_date}"
         super().save(*args, **kwargs)
-
-    objects = CustomUserManager()
-
-    EMAIL_FIELD = 'email'
-    USERNAME_FIELD = 'username'
 
     class Meta:
         app_label = 'doormot_reg_users'
@@ -285,16 +310,16 @@ class Doormot_User_Private_Organization_Owner(AbstractBaseUser, PermissionsMixin
     false_log_count = models.PositiveIntegerField(null=True, default=None)
     currently_logged_in = models.BooleanField(null=True, default=False)
 
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            current_date = timezone.now().date()
-            random = rand()
-            random_alphanumeric = random.alphanumeric()
-            random_int = random.generate_random_number()
+    recovery_code = models.CharField(null=True, blank=True, max_length=40, default=None)
+    recovery_salt = models.CharField(null=True, blank=True, max_length=40, default=None)
+    unhashed_recovery_code = models.CharField(null=True, blank=True, max_length=40, default=None)
+    locked_account_count_down_start_time = models.DateTimeField(null=True, blank=True, default=None)
 
-            self.user_id = f"PRV/ORG/OWN/{random_int}/{random_alphanumeric}/{current_date}"
-        super().save(*args, **kwargs)
-
+    founding_year_of_org = models.CharField(null=True, blank=True, max_length=40, default=None)
+    org_first_office_location = models.CharField(null=True, blank=True, max_length=40, default=None)
+    first_ceo_pres_of_org = models.CharField(null=True, blank=True, max_length=40, default=None)
+    current_ceo_pres_of_org = models.CharField(null=True, blank=True, max_length=40, default=None)
+    official_mission_statement = models.CharField(null=True, blank=True, max_length=40, default=None)
 
     organization_type = models.CharField(null=False, blank=False, max_length=40, choices=ORGANIZATION_TYPE_CHOICES,  default=None)
 
@@ -316,6 +341,29 @@ class Doormot_User_Private_Organization_Owner(AbstractBaseUser, PermissionsMixin
 
     EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'username'
+
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            current_date = timezone.now().date()
+            random = rand()
+            random_alphanumeric = random.alphanumeric()
+            random_int = random.generate_random_number()
+
+            generate_recovery_code = generate_hashed_secret_code(token_lenght=16, hash_iterations=10000)
+            generated_unhashed_recovery_code = generate_recovery_code.generate_hexadeci_code()
+            generated_salt = generate_recovery_code.generate_salt()
+            hashed_code = generate_recovery_code.hash_code(secret_code=generated_unhashed_recovery_code, salt=generated_salt)
+
+            self.recovery_salt = generated_salt
+            self.recovery_code = hashed_code
+            self.unhashed_recovery_code = generated_unhashed_recovery_code
+
+             # Send the unhashed code signal
+            send_signal.send(sender=self.__class__, unhashed_recovery_code=generated_unhashed_recovery_code)
+
+            self.user_id = f"PRV/ORG/OWN/{random_int}/{random_alphanumeric}/{current_date}"
+        super().save(*args, **kwargs)
 
     class Meta:
         app_label = 'doormot_reg_users'
@@ -447,15 +495,16 @@ class Doormot_User_Individual_Buyer(AbstractBaseUser, PermissionsMixin):
     false_log_count = models.PositiveIntegerField(null=True, default=None)
     currently_logged_in = models.BooleanField(null=True, default=False)
 
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            current_date = timezone.now().date()
-            random = rand()
-            random_alphanumeric = random.alphanumeric()
-            random_int = random.generate_random_number()
+    recovery_code = models.CharField(null=True, blank=True, max_length=40, default=None)
+    recovery_salt = models.CharField(null=True, blank=True, max_length=40, default=None)
+    unhashed_recovery_code = models.CharField(null=True, blank=True, max_length=40, default=None)
+    locked_account_count_down_start_time = models.DateTimeField(null=True, blank=True, default=None)
 
-            self.user_id = f"IND/BYR/{random_int}/{random_alphanumeric}/{current_date}"
-        super().save(*args, **kwargs)
+    name_of_first_pet = models.CharField(null=True, blank=True, max_length=40, default=None)
+    name_of_high_school_attended = models.CharField(null=True, blank=True, max_length=40, default=None)
+    name_of_mother_place_of_birth = models.CharField(null=True, blank=True, max_length=40, default=None)
+    favorite_movie_title = models.CharField(null=True, blank=True, max_length=40, default=None)
+    last_name_of_favorite_high_school_teacher = models.CharField(null=True, blank=True, max_length=40, default=None)
 
     username = models.CharField(max_length=30, unique=True, null=False, blank=False)
     email = models.EmailField(unique=True, null=False, blank=False)
@@ -468,6 +517,28 @@ class Doormot_User_Individual_Buyer(AbstractBaseUser, PermissionsMixin):
 
     EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'username'
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            current_date = timezone.now().date()
+            random = rand()
+            random_alphanumeric = random.alphanumeric()
+            random_int = random.generate_random_number()
+
+            generate_recovery_code = generate_hashed_secret_code(token_lenght=16, hash_iterations=10000)
+            generated_unhashed_recovery_code = generate_recovery_code.generate_hexadeci_code()
+            generated_salt = generate_recovery_code.generate_salt()
+            hashed_code = generate_recovery_code.hash_code(secret_code=generated_unhashed_recovery_code, salt=generated_salt)
+
+            self.recovery_salt = generated_salt
+            self.recovery_code = hashed_code
+            self.unhashed_recovery_code = generated_unhashed_recovery_code
+
+             # Send the unhashed code signal
+            send_signal.send(sender=self.__class__, unhashed_recovery_code=generated_unhashed_recovery_code)
+
+            self.user_id = f"IND/BYR/{random_int}/{random_alphanumeric}/{current_date}"
+        super().save(*args, **kwargs)
 
     class Meta:
         app_label = 'doormot_reg_users'
@@ -572,15 +643,16 @@ class Doormot_User_Private_Organization_Buyer(AbstractBaseUser, PermissionsMixin
     false_log_count = models.PositiveIntegerField(null=True, default=None)
     currently_logged_in = models.BooleanField(null=True, default=False)
 
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            current_date = timezone.now().date()
-            random = rand()
-            random_alphanumeric = random.alphanumeric()
-            random_int = random.generate_random_number()
+    recovery_code = models.CharField(null=True, blank=True, max_length=40, default=None)
+    recovery_salt = models.CharField(null=True, blank=True, max_length=40, default=None)
+    unhashed_recovery_code = models.CharField(null=True, blank=True, max_length=40, default=None)
+    locked_account_count_down_start_time = models.DateTimeField(null=True, blank=True, default=None)
 
-            self.user_id = f"PRV/ORG/BYR/{random_int}/{random_alphanumeric}/{current_date}"
-        super().save(*args, **kwargs)
+    founding_year_of_org = models.CharField(null=True, blank=True, max_length=40, default=None)
+    org_first_office_location = models.CharField(null=True, blank=True, max_length=40, default=None)
+    first_ceo_pres_of_org = models.CharField(null=True, blank=True, max_length=40, default=None)
+    current_ceo_pres_of_org = models.CharField(null=True, blank=True, max_length=40, default=None)
+    official_mission_statement = models.CharField(null=True, blank=True, max_length=40, default=None)
 
     organization_type = models.CharField(null=False, blank=False, max_length=40, choices=ORGANIZATION_TYPE_CHOICES,  default=None)
 
@@ -602,6 +674,29 @@ class Doormot_User_Private_Organization_Buyer(AbstractBaseUser, PermissionsMixin
 
     EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'username'
+
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            current_date = timezone.now().date()
+            random = rand()
+            random_alphanumeric = random.alphanumeric()
+            random_int = random.generate_random_number()
+
+            generate_recovery_code = generate_hashed_secret_code(token_lenght=16, hash_iterations=10000)
+            generated_unhashed_recovery_code = generate_recovery_code.generate_hexadeci_code()
+            generated_salt = generate_recovery_code.generate_salt()
+            hashed_code = generate_recovery_code.hash_code(secret_code=generated_unhashed_recovery_code, salt=generated_salt)
+
+            self.recovery_salt = generated_salt
+            self.recovery_code = hashed_code
+            self.unhashed_recovery_code = generated_unhashed_recovery_code
+
+             # Send the unhashed code signal
+            send_signal.send(sender=self.__class__, unhashed_recovery_code=generated_unhashed_recovery_code)
+
+            self.user_id = f"PRV/ORG/BYR/{random_int}/{random_alphanumeric}/{current_date}"
+        super().save(*args, **kwargs)
 
     class Meta:
         app_label = 'doormot_reg_users'
@@ -729,16 +824,17 @@ class Doormot_User_Individual_Tenant(AbstractBaseUser, PermissionsMixin):
     user_id = models.CharField(max_length=50, unique=True, default=None)
     false_log_count = models.PositiveIntegerField(null=True, default=None)
     currently_logged_in = models.BooleanField(null=True, default=False)
+   
+    recovery_code = models.CharField(null=True, blank=True, max_length=40, default=None)
+    recovery_salt = models.CharField(null=True, blank=True, max_length=40, default=None)
+    unhashed_recovery_code = models.CharField(null=True, blank=True, max_length=40, default=None)
+    locked_account_count_down_start_time = models.DateTimeField(null=True, blank=True, default=None)
 
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            current_date = timezone.now().date()
-            random = rand()
-            random_alphanumeric = random.alphanumeric()
-            random_int = random.generate_random_number()
-
-            self.user_id = f"IND/TNT/{random_int}/{random_alphanumeric}/{current_date}"
-        super().save(*args, **kwargs)
+    name_of_first_pet = models.CharField(null=True, blank=True, max_length=40, default=None)
+    name_of_high_school_attended = models.CharField(null=True, blank=True, max_length=40, default=None)
+    name_of_mother_place_of_birth = models.CharField(null=True, blank=True, max_length=40, default=None)
+    favorite_movie_title = models.CharField(null=True, blank=True, max_length=40, default=None)
+    last_name_of_favorite_high_school_teacher = models.CharField(null=True, blank=True, max_length=40, default=None)
 
     username = models.CharField(max_length=30, unique=True, null=False, blank=False)
     email = models.EmailField(unique=True, null=False, blank=False)
@@ -751,6 +847,29 @@ class Doormot_User_Individual_Tenant(AbstractBaseUser, PermissionsMixin):
 
     EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'username'
+       
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            current_date = timezone.now().date()
+            random = rand()
+            random_alphanumeric = random.alphanumeric()
+            random_int = random.generate_random_number()
+
+            generate_recovery_code = generate_hashed_secret_code(token_lenght=16, hash_iterations=10000)
+            generated_unhashed_recovery_code = generate_recovery_code.generate_hexadeci_code()
+            generated_salt = generate_recovery_code.generate_salt()
+            hashed_code = generate_recovery_code.hash_code(secret_code=generated_unhashed_recovery_code, salt=generated_salt)
+
+            self.recovery_salt = generated_salt
+            self.recovery_code = hashed_code
+            self.unhashed_recovery_code = generated_unhashed_recovery_code
+
+             # Send the unhashed code signal
+            send_signal.send(sender=self.__class__, unhashed_recovery_code=generated_unhashed_recovery_code)
+
+            self.user_id = f"IND/TNT/{random_int}/{random_alphanumeric}/{current_date}"
+        super().save(*args, **kwargs)
 
     class Meta:
         app_label = 'doormot_reg_users'
@@ -855,15 +974,16 @@ class Doormot_User_Private_Organization_Tenant(AbstractBaseUser, PermissionsMixi
     false_log_count = models.PositiveIntegerField(null=True, default=None)
     currently_logged_in = models.BooleanField(null=True, default=False)
 
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            current_date = timezone.now().date()
-            random = rand()
-            random_alphanumeric = random.alphanumeric()
-            random_int = random.generate_random_number()
+    recovery_code = models.CharField(null=True, blank=True, max_length=40, default=None)
+    recovery_salt = models.CharField(null=True, blank=True, max_length=40, default=None)
+    unhashed_recovery_code = models.CharField(null=True, blank=True, max_length=40, default=None)
+    locked_account_count_down_start_time = models.DateTimeField(null=True, blank=True, default=None)
 
-            self.user_id = f"PRV/ORG/TNT/{random_int}/{random_alphanumeric}/{current_date}"
-        super().save(*args, **kwargs)
+    founding_year_of_org = models.CharField(null=True, blank=True, max_length=40, default=None)
+    org_first_office_location = models.CharField(null=True, blank=True, max_length=40, default=None)
+    first_ceo_pres_of_org = models.CharField(null=True, blank=True, max_length=40, default=None)
+    current_ceo_pres_of_org = models.CharField(null=True, blank=True, max_length=40, default=None)
+    official_mission_statement = models.CharField(null=True, blank=True, max_length=40, default=None)
 
     organization_type = models.CharField(null=False, blank=False, max_length=40, choices=ORGANIZATION_TYPE_CHOICES,  default=None)
 
@@ -885,6 +1005,29 @@ class Doormot_User_Private_Organization_Tenant(AbstractBaseUser, PermissionsMixi
 
     EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'username'
+
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            current_date = timezone.now().date()
+            random = rand()
+            random_alphanumeric = random.alphanumeric()
+            random_int = random.generate_random_number()
+
+            generate_recovery_code = generate_hashed_secret_code(token_lenght=16, hash_iterations=10000)
+            generated_unhashed_recovery_code = generate_recovery_code.generate_hexadeci_code()
+            generated_salt = generate_recovery_code.generate_salt()
+            hashed_code = generate_recovery_code.hash_code(secret_code=generated_unhashed_recovery_code, salt=generated_salt)
+
+            self.recovery_salt = generated_salt
+            self.recovery_code = hashed_code
+            self.unhashed_recovery_code = generated_unhashed_recovery_code
+
+             # Send the unhashed code signal
+            send_signal.send(sender=self.__class__, unhashed_recovery_code=generated_unhashed_recovery_code)
+
+            self.user_id = f"PRV/ORG/TNT/{random_int}/{random_alphanumeric}/{current_date}"
+        super().save(*args, **kwargs)
 
     class Meta:
         app_label = 'doormot_reg_users'
@@ -1026,16 +1169,18 @@ class Doormot_User_Official_Agent(AbstractBaseUser, PermissionsMixin):
     false_log_count = models.PositiveIntegerField(null=True, default=None)
     date_of_birth = models.DateField(null=False, blank=False, default=timezone.now)
     currently_logged_in = models.BooleanField(null=True, default=False)
+   
+    recovery_code = models.CharField(null=True, blank=True, max_length=40, default=None)
+    recovery_salt = models.CharField(null=True, blank=True, max_length=40, default=None)
+    unhashed_recovery_code = models.CharField(null=True, blank=True, max_length=40, default=None)
+    locked_account_count_down_start_time = models.DateTimeField(null=True, blank=True, default=None)
 
-    def save(self, *args, **kwargs):
-        if not self.pk:
-            current_date = timezone.now().date()
-            random = rand()
-            random_alphanumeric = random.alphanumeric()
-            random_int = random.generate_random_number()
+    name_of_first_pet = models.CharField(null=True, blank=True, max_length=40, default=None)
+    name_of_high_school_attended = models.CharField(null=True, blank=True, max_length=40, default=None)
+    name_of_mother_place_of_birth = models.CharField(null=True, blank=True, max_length=40, default=None)
+    favorite_movie_title = models.CharField(null=True, blank=True, max_length=40, default=None)
+    last_name_of_favorite_high_school_teacher = models.CharField(null=True, blank=True, max_length=40, default=None)       
 
-            self.agent_id = f"OFCL/AGNT/{random_int}/{random_alphanumeric}/{current_date}"
-        super().save(*args, **kwargs)
 
     username = models.CharField(max_length=30, unique=True, null=False, blank=False)
     email = models.EmailField(unique=True, null=False, blank=False)
@@ -1048,6 +1193,28 @@ class Doormot_User_Official_Agent(AbstractBaseUser, PermissionsMixin):
 
     EMAIL_FIELD = 'email'
     USERNAME_FIELD = 'username'
+
+    def save(self, *args, **kwargs):
+        if not self.pk:
+            current_date = timezone.now().date()
+            random = rand()
+            random_alphanumeric = random.alphanumeric()
+            random_int = random.generate_random_number()
+
+            generate_recovery_code = generate_hashed_secret_code(token_lenght=16, hash_iterations=10000)
+            generated_unhashed_recovery_code = generate_recovery_code.generate_hexadeci_code()
+            generated_salt = generate_recovery_code.generate_salt()
+            hashed_code = generate_recovery_code.hash_code(secret_code=generated_unhashed_recovery_code, salt=generated_salt)
+
+            self.recovery_salt = generated_salt
+            self.recovery_code = hashed_code
+            self.unhashed_recovery_code = generated_unhashed_recovery_code
+
+             # Send the unhashed code signal
+            send_signal.send(sender=self.__class__, unhashed_recovery_code=generated_unhashed_recovery_code)
+
+            self.agent_id = f"OFCL/AGNT/{random_int}/{random_alphanumeric}/{current_date}"
+        super().save(*args, **kwargs)
 
     class Meta:
         app_label = 'doormot_reg_users'
@@ -1272,9 +1439,32 @@ class Doormot_User_Independent_Agent(AbstractBaseUser):
 
     agent_id = models.CharField(max_length=50, unique=True, default=None)
     false_log_count = models.PositiveIntegerField(null=True, default=None)
+    simultaneous_log_count = models.PositiveIntegerField(null=True, default=None)
     date_of_birth = models.DateField(null=False, blank=False, default=timezone.now)
     currently_logged_in = models.BooleanField(null=True, default=False)
 
+    recovery_code = models.CharField(null=True, blank=True, max_length=40, default=None)
+    recovery_salt = models.CharField(null=True, blank=True, max_length=40, default=None)
+    unhashed_recovery_code = models.CharField(null=True, blank=True, max_length=40, default=None)
+    locked_account_count_down_start_time = models.DateTimeField(null=True, blank=True, default=None)
+
+    name_of_first_pet = models.CharField(null=True, blank=True, max_length=40, default=None)
+    name_of_high_school_attended = models.CharField(null=True, blank=True, max_length=40, default=None)
+    name_of_mother_place_of_birth = models.CharField(null=True, blank=True, max_length=40, default=None)
+    favorite_movie_title = models.CharField(null=True, blank=True, max_length=40, default=None)
+    last_name_of_favorite_high_school_teacher = models.CharField(null=True, blank=True, max_length=40, default=None)       
+    
+    username = models.CharField(max_length=30, unique=True, null=False, blank=False)
+    email = models.EmailField(unique=True, null=False, blank=False)
+    phone_number = models.CharField(max_length=15, null=False, blank=False, unique=True)
+    
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+
+    objects = CustomUserManager()
+
+    EMAIL_FIELD = 'email'
+    USERNAME_FIELD = 'username'
 
     def save(self, *args, **kwargs):
         if not self.pk:
@@ -1283,20 +1473,20 @@ class Doormot_User_Independent_Agent(AbstractBaseUser):
             random_alphanumeric = random.alphanumeric()
             random_int = random.generate_random_number()
 
+            generate_recovery_code = generate_hashed_secret_code(token_lenght=16, hash_iterations=10000)
+            generated_unhashed_recovery_code = generate_recovery_code.generate_hexadeci_code()
+            generated_salt = generate_recovery_code.generate_salt()
+            hashed_code = generate_recovery_code.hash_code(secret_code=generated_unhashed_recovery_code, salt=generated_salt)
+
+            self.recovery_salt = generated_salt
+            self.recovery_code = hashed_code
+            self.unhashed_recovery_code = generated_unhashed_recovery_code
+
             self.agent_id = f"INDP/AGNT/{random_int}/{random_alphanumeric}/{current_date}"
+
+            # Send the unhashed code signal
+            send_signal.send(sender=self.__class__, unhashed_recovery_code=generated_unhashed_recovery_code)
         super().save(*args, **kwargs)
-    
-    username = models.CharField(max_length=30, unique=True, null=False, blank=False)
-    email = models.EmailField(unique=True, null=False, blank=False)
-    phone_number = models.CharField(max_length=15, null=False, blank=False, unique=True)
-
-    is_active = models.BooleanField(default=True)
-    is_staff = models.BooleanField(default=False)
-
-    objects = CustomUserManager()
-
-    EMAIL_FIELD = 'email'
-    USERNAME_FIELD = 'username'
 
     class Meta:
         app_label = 'doormot_reg_users'

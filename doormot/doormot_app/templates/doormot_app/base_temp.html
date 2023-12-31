@@ -1,7 +1,7 @@
 {% load static %}
 
 <!DOCTYPE html>
-<html>
+<html class="scroll-smooth">
   <head>
     <meta charset="utf-8">
     
@@ -18,7 +18,7 @@
     {% endif %}
     
   </head>
-  <body class="bg-slate-100 space-y-44">
+  <body class="bg-slate-100">
     <div class="container">
         <!--Background Image Container Scetion-->
         <div class="w-screen">
@@ -34,27 +34,31 @@
           {% block top-2nd-section %}{% endblock top-2nd-section %}
         </div>
 
+        <div data-aos="fade-up">
+          {% block available-properties %}{% endblock available-properties %}
+        </div>
+
         <!--Nav Bar Main Section-->
         <div class="flex fixed top-0 justify-between w-screen border shadow-md shadow-gray-800 bg-purple-950">
           
-          <!----logo Section-->
-          <div class="px-3">
-            <div class="text-xl font-extrabold text-orange-600">
-              <a href="{% url 'doormot-home' %}" class="logo"><span>Doormot</span></a>
+            <!----logo Section-->
+            <div class="px-3">
+              <div class="text-lg md:text-xl font-extrabold text-orange-600">
+                <a href="{% url 'doormot-home' %}" class="logo"><span>Doormot</span></a>
+              </div>
             </div>
-          </div>
   
-        <!--Search Bar Section-->
-        <div class="md:flex justify-center items-center sm:hidden">
-          {% block serach-bar-section %}
-          {% endblock serach-bar-section %}
-        </div> 
+          <!--Search Bar Section-->
+          <div class="md:flex justify-center items-center sm:hidden">
+            {% block serach-bar-section %}
+            {% endblock serach-bar-section %}
+          </div> 
           
           <!----nav-bar menu section-->
           <div class="p-x block md:flex justify-between" id="content-box">
 
             <div class="p-x m-2">
-              <ul class="block sm:hidden md:flex space-x-5 text-white" id="navlist">
+              <ul class="hidden md:flex space-x-5 text-white" id="navlist">
                 {% block navlist %}
                 <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-home' %}">HOME</a></li>
                 <li class="hover:text-orange-600 hover:font-extrabold"><a href="{% url 'doormot-about' %}">ABOUT US</a></li>
@@ -67,7 +71,7 @@
     
             <!----log menu section-->
             <div class="md:mx-11">
-              <ul class="block sm:hidden md:flex space-x-4 text-white text-xs" id="log-nav-list">
+              <ul class="hidden md:flex space-x-4 text-white text-xs" id="log-nav-list">
                 {% block navlist-right-header %}
                 {% if user.is_authenticated %}
                 <li class="m-2 md:border md:border-full md:justify-center md:items-center md:border-orange-600 md:rounded-full px-2 py-1 md:bg-purple-700 md:hover:bg-orange-600"><a href=" {% url 'doormot_users_profiles_profile_views' username=user.username %}"><small>Profile</small></a></li>
@@ -106,9 +110,7 @@
     <!--###################################################### First Section Starts #################################################--> 
     <section>
       <!--Available Properties-->
-      <div>
-        {% block available-properties %}{% endblock available-properties %}
-      </div>
+      
 
       <div class="py-3 px-4 block md:flex md:flex-wrap md:-mx-2">
         <!---First Column-->
@@ -125,8 +127,8 @@
 
 
     <!--###################################################### Second Section Starts #################################################-->
-    <section>
-      <div class="container w-full">
+    <section class="smooth-scroll-link">
+      <div class="container w-full mt-20">
         <div class="grid-cols-10 gap-4 block md:grid w-full">
 
           <!--Second Section Column1-->

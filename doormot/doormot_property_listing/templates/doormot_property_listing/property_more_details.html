@@ -246,7 +246,6 @@
             </div>
 
             <!-- RELATED PROPERTY CARDS Section -->
-
             <div class="p-1 mt-7 bg-purple-950 text-white text-center">
                 <p>Related properties you might be interseted in</p>
             </div>
@@ -262,19 +261,19 @@
                         <div class="border border-full shadow-sm shadow-gray-600 overflow-hidden relative">
                             <div class="border border-full shadow-md shadow-gray-600 overflow-hidden p-2">
                                 {% if for_sale == 'Yes' %}
-                                {% if advertisied_filtered_property_first_image %}
+                                {% with first_image=property_model.for_sale_properties_images_set.first %}
                                 <div class="m-1 overflow-hidden h-28">
-                                    <img src="{{ advertisied_filtered_property_first_image.images.url }}" alt="No image uploaded for this product" class="w-full h-28 rounded-sm object-cover">
+                                    <img src="{{ first_image.images.url }}" alt="No image uploaded for this product" class="w-full h-28 rounded-sm object-cover">
                                 </div>
-                                {% endif %} 
+                                {% endwith %} 
                                 {% endif %}
                                 
                                 {% if for_sale == 'No' %}
-                                {% if advertisied_filtered_property_first_image %}
+                                {% with first_image=property_model.to_let_properties_images_set.first %}
                                 <div class="m-1 overflow-hidden h-28">
                                     <img src="{{ advertisied_filtered_property_first_image.images.url }}" alt="No image uploaded for this product" class="w-full h-28 rounded-sm object-cover">
                                 </div>
-                                {% endif %} 
+                                {% endwith %} 
                                 {% endif %}
 
                                 {% if for_sale == None %}
@@ -384,7 +383,7 @@
                     <h6>There is no available property that is closely related to this property yet.</h6>
                 </div> 
                 {% endif %} <!-- endif for filtered_property_models -->
-            </div>
+            </div>     
         </div>      
     </div>    
 </div>  
@@ -392,12 +391,14 @@
 {% endfor %}
 
 {% if all_images%}
-<div class="lazy-image flex shadow-sm  border rounded-tr-2xl rounded-bl-2xl shadow-slate-800  overflow-scroll mt-6">
-    {% for image in all_images %}                   
-    <div class="m-1 w-1/2 overflow-hidden h-48 shadow-sm border rounded-tr-2xl rounded-bl-2xl shadow-slate-800">
+<div class="flex overflow-scroll p-6 justify-center gap-2">
+    {% for image in all_images %} 
+<div class="lazy-image flex shadow-sm  border rounded-tr-2xl rounded-bl-2xl shadow-slate-800 mt-6 transform cursor-pointer ease-in-out duration-1000 backdrop-blur-sm hover:scale-[200%]">                  
+    <div class="m-1 overflow-hidden h-48 shadow-sm border rounded-tr-2xl rounded-bl-2xl shadow-slate-800">
         <img src="{{ image.images.url }}" alt="No image uploaded for this product" class="w-full h-48 object-cover">
-    </div>
-    {% endfor %} 
+    </div> 
+</div>
+{% endfor %}
 </div>
 {% else %}
 <div class="m-1 overflow-hidden h-48">

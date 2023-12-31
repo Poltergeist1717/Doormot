@@ -19,8 +19,8 @@ class RateLimitMiddleware:
         last_request_time = cache.get(key)
 
         try:
-            if is_potentially_harmful_request():
-                if handle_is_potentially_harmful_request():
+            if self.is_potentially_harmful_request():
+                if self.handle_is_potentially_harmful_request():
                     # If user exceeds the allowed number of request per specified timeframe, collect information
                     if last_request_time is not None and (now - last_request_time).seconds < 60:
                         gadget_and_user_info = self.collect_gadget_and_user_info(request)
@@ -38,18 +38,24 @@ class RateLimitMiddleware:
         except Exception as e:
             logger.exception("There was an error while running RateLimitMiddleWare: %s", e)
 
-    def is_potentially_harmful_request(self, request):
+    
+    def __call__(self, request):
+        response = self.get_response(request)
+        return response
+
+
+    def is_potentially_harmful_request(self):
         # criteria to identify potential harmful request
         # return True
         pass
     
-    def handle_is_potentially_harmful_request(self, request):
+    def handle_is_potentially_harmful_request(self):
         # if is_potentially_harmful_request returns True
         # handle the request by maybe asking user to solve captcha
         # if captcha solved return True
         pass
 
-    def collect_gadget_and_user_info(self, request):
+    def collect_gadget_and_user_info(self):
         collected_gadget_and_user_info = {}
         # collect gadget-specific info
         # for example, extract user-agent, device details, etc
@@ -70,8 +76,6 @@ class RateLimitMiddleware:
 #     class Meta:
 #         unique_together = ['filter_conditions']
 
-
-
 # result, created = DataForUnmatchedFilteredSearch.objects.get_or_create(
 #     filter_conditions = filter_conditions,
 #     defaults = {'result_count':1}
@@ -80,3 +84,32 @@ class RateLimitMiddleware:
 # if not created:
 #     result.result_count += 1
 #     result.save()
+
+
+
+class ContentSecurityPolicyMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+
+        response['Content-Security-Policy'] = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';"
+
+        return response
+
+
+class SecurityHeadersMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        response = self.get_response(request)
+
+
+        response['Strict-Transport-Security'] = 'max-age=31536000; includeSubDomains; preload'
+        response['X-Content-Type-Options'] = 'nosniff'
+        response['X-Frame-Options'] = 'DENY'
+        response['Content-Security-Policy'] = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline';"
+
+        return response
